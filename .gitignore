@@ -23,3 +23,8 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Server
+server/pos.db
+server/uploads/*
+!server/uploads/.gitkeep

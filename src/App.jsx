@@ -5,18 +5,29 @@ const POSSystem = () => {
   // State Management
   const [activeView, setActiveView] = useState('pos');
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
-  const [products, setProducts] = useState([
-    { id: 'P001', name: 'White Bread', price: 45.00, barcode: '8801234567890', category: 'Bakery', image: null, isDeleted: false },
-    { id: 'P002', name: 'Coca-Cola 1.5L', price: 85.00, barcode: '8801234567891', category: 'Beverages', image: null, isDeleted: false },
-    { id: 'P003', name: 'Marlboro Red', price: 165.00, barcode: '8801234567892', category: 'Tobacco', image: null, isDeleted: false },
-    { id: 'P004', name: 'Lucky Me Pancit Canton', price: 15.00, barcode: '8801234567893', category: 'Instant Noodles', image: null, isDeleted: false },
-    { id: 'P005', name: 'San Miguel Pale Pilsen', price: 55.00, barcode: '8801234567894', category: 'Beverages', image: null, isDeleted: false },
-    { id: 'P006', name: 'Safeguard Soap', price: 35.00, barcode: '8801234567895', category: 'Personal Care', image: null, isDeleted: false },
-    { id: 'P007', name: 'Alaska Evaporated Milk', price: 28.00, barcode: '8801234567896', category: 'Dairy', image: null, isDeleted: false },
-    { id: 'P008', name: 'Century Tuna', price: 32.00, barcode: '8801234567897', category: 'Canned Goods', image: null, isDeleted: false },
-    { id: 'P009', name: 'Piattos Cheese', price: 25.00, barcode: '8801234567898', category: 'Snacks', image: null, isDeleted: false },
-    { id: 'P010', name: 'Colgate Toothpaste', price: 48.00, barcode: '8801234567899', category: 'Personal Care', image: null, isDeleted: false },
-  ]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/products');
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data);
+        } else {
+          console.error('Failed to fetch products');
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
   
   const [cart, setCart] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -128,7 +139,7 @@ const POSSystem = () => {
       }
       const imageUrl = URL.createObjectURL(file);
       setImagePreview(imageUrl);
-      setNewProduct({ ...newProduct, image: imageUrl });
+      setNewProduct({ ...newProduct, image: imageUrl, imageFile: file });
     }
   };
 
@@ -152,25 +163,41 @@ const POSSystem = () => {
   };
 
   // Add new product
-  const addNewProduct = () => {
+  const addNewProduct = async () => {
     if (!newProduct.name || !newProduct.price || !newProduct.barcode) {
       alert('Please fill in all required fields');
       return;
     }
 
-    const product = {
-      id: `P${String(products.length + 1).padStart(3, '0')}`,
-      name: newProduct.name,
-      price: parseFloat(newProduct.price),
-      barcode: newProduct.barcode,
-      category: newProduct.category || 'General',
-      image: newProduct.image
-    };
+    try {
+      const formData = new FormData();
+      formData.append('name', newProduct.name);
+      formData.append('price', newProduct.price);
+      formData.append('barcode', newProduct.barcode);
+      formData.append('category', newProduct.category || 'General');
+      if (newProduct.imageFile) {
+        formData.append('image', newProduct.imageFile);
+      }
 
-    setProducts([...products, product]);
-    setNewProduct({ name: '', price: '', barcode: '', category: '', image: null });
-    setImagePreview(null);
-    alert('Product added successfully!');
+      const response = await fetch('http://localhost:3001/api/products', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add product');
+      }
+
+      const product = await response.json();
+
+      setProducts([...products, product]);
+      setNewProduct({ name: '', price: '', barcode: '', category: '', image: null, imageFile: null });
+      setImagePreview(null);
+      alert('Product added successfully!');
+    } catch (error) {
+      console.error('Error adding product:', error);
+      alert('Error adding product. Please try again.');
+    }
   };
 
   // Audit Log Helper
@@ -186,27 +213,44 @@ const POSSystem = () => {
   };
 
   // Soft Delete Product
-  const handleSoftDelete = () => {
+  const handleSoftDelete = async () => {
     const product = deleteConfirmation.product;
     if (!product) return;
 
-    // Cascade: Remove from cart if present
-    const inCart = cart.find(item => item.id === product.id);
-    if (inCart) {
-      removeFromCart(product.id);
-      logAction('CASCADE_DELETE_CART', `Removed ${product.name} from active cart during deletion`);
-    }
+    try {
+      const response = await fetch(`http://localhost:3001/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isDeleted: true }),
+      });
 
-    setProducts(products.map(p => 
-      p.id === product.id ? { ...p, isDeleted: true } : p
-    ));
-    
-    logAction('PRODUCT_DELETE', `Soft deleted product: ${product.name} (${product.id})`);
-    setDeleteConfirmation({ open: false, product: null });
+      if (!response.ok) {
+        throw new Error('Failed to delete product');
+      }
+
+      // Cascade: Remove from cart if present
+      const inCart = cart.find(item => item.id === product.id);
+      if (inCart) {
+        removeFromCart(product.id);
+        logAction('CASCADE_DELETE_CART', `Removed ${product.name} from active cart during deletion`);
+      }
+
+      setProducts(products.map(p => 
+        p.id === product.id ? { ...p, isDeleted: true } : p
+      ));
+      
+      logAction('PRODUCT_DELETE', `Soft deleted product: ${product.name} (${product.id})`);
+      setDeleteConfirmation({ open: false, product: null });
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Error deleting product. Please try again.');
+    }
   };
 
   // Update Product Image
-  const handleUpdateImage = (file) => {
+  const handleUpdateImage = async (file) => {
     if (!file) return;
     
     // Validation
@@ -221,15 +265,33 @@ const POSSystem = () => {
       return;
     }
 
-    const imageUrl = URL.createObjectURL(file);
     const product = editImageModal.product;
 
-    setProducts(products.map(p => 
-      p.id === product.id ? { ...p, image: imageUrl } : p
-    ));
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
 
-    logAction('IMAGE_UPDATE', `Updated image for product: ${product.name} (${product.id})`);
-    setEditImageModal({ open: false, product: null, preview: null });
+      const response = await fetch(`http://localhost:3001/api/products/${product.id}`, {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update image');
+      }
+
+      const updatedProduct = await response.json();
+
+      setProducts(products.map(p => 
+        p.id === product.id ? updatedProduct : p
+      ));
+
+      logAction('IMAGE_UPDATE', `Updated image for product: ${product.name} (${product.id})`);
+      setEditImageModal({ open: false, product: null, preview: null });
+    } catch (error) {
+      console.error('Error updating image:', error);
+      alert('Error updating image. Please try again.');
+    }
   };
 
   // Filter products
@@ -633,7 +695,7 @@ const POSSystem = () => {
               )}
             </label>
             <p className="text-xs text-gray-500 mt-2">
-              Note: Uploaded images are stored locally for this session. Persistent storage would require backend integration.
+              Note: Uploaded images are stored securely on the server.
             </p>
           </div>
         </div>
