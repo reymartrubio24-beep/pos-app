@@ -8,7 +8,7 @@ const PrimaryButton = ({
   <button
     type={type}
     onClick={onClick}
-    className={`bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${className}`}
+    className={`bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#1A1A1D] ${className}`}
     {...rest}
   >
     {children}
