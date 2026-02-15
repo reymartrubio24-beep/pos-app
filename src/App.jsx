@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, BarChart3, Package, Settings, User, Search, Plus, Minus, Trash2, DollarSign, Calendar, TrendingUp, Clock, CheckCircle, Moon, Sun, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { ShoppingCart, BarChart3, Package, Settings, User, Search, Plus, Minus, Trash2, DollarSign, Calendar, TrendingUp, Clock, CheckCircle, Moon, Sun, Upload, X, Image as ImageIcon, Edit, AlertTriangle, History } from 'lucide-react';
 
 const POSSystem = () => {
   // State Management
   const [activeView, setActiveView] = useState('pos');
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
   const [products, setProducts] = useState([
-    { id: 'P001', name: 'White Bread', price: 45.00, barcode: '8801234567890', category: 'Bakery', image: null },
-    { id: 'P002', name: 'Coca-Cola 1.5L', price: 85.00, barcode: '8801234567891', category: 'Beverages', image: null },
-    { id: 'P003', name: 'Marlboro Red', price: 165.00, barcode: '8801234567892', category: 'Tobacco', image: null },
-    { id: 'P004', name: 'Lucky Me Pancit Canton', price: 15.00, barcode: '8801234567893', category: 'Instant Noodles', image: null },
-    { id: 'P005', name: 'San Miguel Pale Pilsen', price: 55.00, barcode: '8801234567894', category: 'Beverages', image: null },
-    { id: 'P006', name: 'Safeguard Soap', price: 35.00, barcode: '8801234567895', category: 'Personal Care', image: null },
-    { id: 'P007', name: 'Alaska Evaporated Milk', price: 28.00, barcode: '8801234567896', category: 'Dairy', image: null },
-    { id: 'P008', name: 'Century Tuna', price: 32.00, barcode: '8801234567897', category: 'Canned Goods', image: null },
-    { id: 'P009', name: 'Piattos Cheese', price: 25.00, barcode: '8801234567898', category: 'Snacks', image: null },
-    { id: 'P010', name: 'Colgate Toothpaste', price: 48.00, barcode: '8801234567899', category: 'Personal Care', image: null },
+    { id: 'P001', name: 'White Bread', price: 45.00, barcode: '8801234567890', category: 'Bakery', image: null, isDeleted: false },
+    { id: 'P002', name: 'Coca-Cola 1.5L', price: 85.00, barcode: '8801234567891', category: 'Beverages', image: null, isDeleted: false },
+    { id: 'P003', name: 'Marlboro Red', price: 165.00, barcode: '8801234567892', category: 'Tobacco', image: null, isDeleted: false },
+    { id: 'P004', name: 'Lucky Me Pancit Canton', price: 15.00, barcode: '8801234567893', category: 'Instant Noodles', image: null, isDeleted: false },
+    { id: 'P005', name: 'San Miguel Pale Pilsen', price: 55.00, barcode: '8801234567894', category: 'Beverages', image: null, isDeleted: false },
+    { id: 'P006', name: 'Safeguard Soap', price: 35.00, barcode: '8801234567895', category: 'Personal Care', image: null, isDeleted: false },
+    { id: 'P007', name: 'Alaska Evaporated Milk', price: 28.00, barcode: '8801234567896', category: 'Dairy', image: null, isDeleted: false },
+    { id: 'P008', name: 'Century Tuna', price: 32.00, barcode: '8801234567897', category: 'Canned Goods', image: null, isDeleted: false },
+    { id: 'P009', name: 'Piattos Cheese', price: 25.00, barcode: '8801234567898', category: 'Snacks', image: null, isDeleted: false },
+    { id: 'P010', name: 'Colgate Toothpaste', price: 48.00, barcode: '8801234567899', category: 'Personal Care', image: null, isDeleted: false },
   ]);
   
   const [cart, setCart] = useState([]);
@@ -24,6 +24,11 @@ const POSSystem = () => {
   const [transactions, setTransactions] = useState([]);
   const [showReceipt, setShowReceipt] = useState(false);
   const [currentReceipt, setCurrentReceipt] = useState(null);
+  const [auditLogs, setAuditLogs] = useState([]);
+
+  // Modal States
+  const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, product: null });
+  const [editImageModal, setEditImageModal] = useState({ open: false, product: null, preview: null });
   
   // New Product Form State
   const [newProduct, setNewProduct] = useState({
@@ -168,11 +173,71 @@ const POSSystem = () => {
     alert('Product added successfully!');
   };
 
+  // Audit Log Helper
+  const logAction = (action, details) => {
+    const log = {
+      id: `LOG${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date(),
+      action,
+      details
+    };
+    setAuditLogs(prev => [log, ...prev]);
+    console.log(`[AUDIT] ${action}:`, details);
+  };
+
+  // Soft Delete Product
+  const handleSoftDelete = () => {
+    const product = deleteConfirmation.product;
+    if (!product) return;
+
+    // Cascade: Remove from cart if present
+    const inCart = cart.find(item => item.id === product.id);
+    if (inCart) {
+      removeFromCart(product.id);
+      logAction('CASCADE_DELETE_CART', `Removed ${product.name} from active cart during deletion`);
+    }
+
+    setProducts(products.map(p => 
+      p.id === product.id ? { ...p, isDeleted: true } : p
+    ));
+    
+    logAction('PRODUCT_DELETE', `Soft deleted product: ${product.name} (${product.id})`);
+    setDeleteConfirmation({ open: false, product: null });
+  };
+
+  // Update Product Image
+  const handleUpdateImage = (file) => {
+    if (!file) return;
+    
+    // Validation
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Invalid file type. Please upload JPEG, PNG, or WebP.');
+      return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size exceeds 5MB limit.');
+      return;
+    }
+
+    const imageUrl = URL.createObjectURL(file);
+    const product = editImageModal.product;
+
+    setProducts(products.map(p => 
+      p.id === product.id ? { ...p, image: imageUrl } : p
+    ));
+
+    logAction('IMAGE_UPDATE', `Updated image for product: ${product.name} (${product.id})`);
+    setEditImageModal({ open: false, product: null, preview: null });
+  };
+
   // Filter products
   const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    !p.isDeleted &&
+    (p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.barcode.includes(searchQuery) ||
-    p.id.toLowerCase().includes(searchQuery.toLowerCase())
+    p.id.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   // Calculate statistics
@@ -539,7 +604,7 @@ const POSSystem = () => {
                 ref={fileInputRef}
                 type="file"
                 className="hidden"
-                accept="image/*"
+                accept="image/jpeg, image/png, image/webp"
                 onChange={(e) => handleImageChange(e.target.files[0])}
               />
               
@@ -563,7 +628,7 @@ const POSSystem = () => {
                   <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-semibold text-blue-600 dark:text-blue-400">Click to upload</span> or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG up to 5MB</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">JPEG, PNG, WebP up to 5MB</p>
                 </div>
               )}
             </label>
@@ -596,18 +661,22 @@ const POSSystem = () => {
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Category</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Barcode</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Price</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {products.map(product => (
+              {products.map(product => !product.isDeleted && (
                 <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-[#27272a] transition-colors">
                   <td className="px-6 py-4">
-                    <div className="h-10 w-10 bg-gray-100 dark:bg-[#1A1A1D] rounded overflow-hidden flex items-center justify-center">
+                    <div className="h-10 w-10 bg-gray-100 dark:bg-[#1A1A1D] rounded overflow-hidden flex items-center justify-center cursor-pointer group relative" onClick={() => setEditImageModal({ open: true, product, preview: product.image })}>
                       {product.image ? (
                         <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                       ) : (
                         <ImageIcon size={20} className="text-gray-400" />
                       )}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-all">
+                          <Edit size={16} className="text-white opacity-0 group-hover:opacity-100" />
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 font-mono text-sm text-gray-800 dark:text-gray-200">{product.id}</td>
@@ -615,14 +684,185 @@ const POSSystem = () => {
                   <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{product.category}</td>
                   <td className="px-6 py-4 font-mono text-sm text-gray-600 dark:text-gray-400">{product.barcode}</td>
                   <td className="px-6 py-4 font-semibold text-blue-600 dark:text-blue-400">₱{product.price.toFixed(2)}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => setEditImageModal({ open: true, product, preview: product.image })}
+                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"
+                            title="Update Image"
+                        >
+                            <ImageIcon size={18} />
+                        </button>
+                        <button 
+                            onClick={() => setDeleteConfirmation({ open: true, product })}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                            title="Delete Product"
+                        >
+                            <Trash2 size={18} />
+                        </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Audit Logs Section */}
+      <div className="bg-white dark:bg-[#1A1A1D] rounded-lg border-2 border-gray-200 dark:border-gray-600 overflow-hidden transition-colors duration-200">
+         <div className="bg-gray-50 dark:bg-[#1A1A1D] px-6 py-4 border-b-2 border-gray-200 dark:border-gray-600 flex items-center justify-between">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <History size={24} />
+                Audit Log
+            </h3>
+            <span className="text-sm text-gray-500">{auditLogs.length} records</span>
+         </div>
+         <div className="max-h-60 overflow-y-auto">
+             {auditLogs.length === 0 ? (
+                 <div className="p-8 text-center text-gray-400">No activity recorded yet</div>
+             ) : (
+                 <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-[#1A1A1D] sticky top-0">
+                        <tr>
+                            <th className="px-6 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Time</th>
+                            <th className="px-6 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Action</th>
+                            <th className="px-6 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {auditLogs.map(log => (
+                            <tr key={log.id} className="text-sm">
+                                <td className="px-6 py-3 font-mono text-gray-600 dark:text-gray-400">
+                                    {log.timestamp.toLocaleTimeString()}
+                                </td>
+                                <td className="px-6 py-3 font-semibold text-gray-800 dark:text-gray-200">
+                                    {log.action}
+                                </td>
+                                <td className="px-6 py-3 text-gray-600 dark:text-gray-400">
+                                    {log.details}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                 </table>
+             )}
+         </div>
+      </div>
     </div>
   );
+
+  // Delete Confirmation Modal
+  const DeleteModal = () => {
+    if (!deleteConfirmation.open) return null;
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-[#1A1A1D] rounded-lg shadow-xl max-w-sm w-full p-6 border-2 border-red-100 dark:border-red-900/30">
+          <div className="flex flex-col items-center text-center">
+            <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-full mb-4">
+              <AlertTriangle className="text-red-600 dark:text-red-400" size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Delete Product?</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete <strong>{deleteConfirmation.product?.name}</strong>? This action will remove it from inventory and active carts.
+            </p>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => setDeleteConfirmation({ open: false, product: null })}
+                className="flex-1 py-2 px-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-[#27272a]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSoftDelete}
+                className="flex-1 py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Image Upload Modal
+  const ImageUploadModal = () => {
+    if (!editImageModal.open) return null;
+    
+    const onModalDrop = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+         const file = e.dataTransfer.files[0];
+         const url = URL.createObjectURL(file);
+         setEditImageModal(prev => ({ ...prev, preview: url, file }));
+      }
+    };
+
+    const handleFileSelect = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const url = URL.createObjectURL(file);
+            setEditImageModal(prev => ({ ...prev, preview: url, file }));
+        }
+    }
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-[#1A1A1D] rounded-lg shadow-xl max-w-md w-full p-6 border-2 border-gray-200 dark:border-gray-600">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <ImageIcon size={20} />
+              Update Image
+            </h3>
+            <button onClick={() => setEditImageModal({ open: false, product: null, preview: null })} className="text-gray-500 hover:text-gray-700">
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="mb-4">
+             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Product: <strong>{editImageModal.product?.name}</strong></p>
+             
+             <label 
+              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors bg-gray-50 dark:bg-[#27272a]"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={onModalDrop}
+             >
+               <input type="file" className="hidden" accept="image/jpeg, image/png, image/webp" onChange={handleFileSelect} />
+               
+               {editImageModal.preview ? (
+                 <img src={editImageModal.preview} alt="Preview" className="h-40 w-40 object-contain rounded-lg mb-2" />
+               ) : (
+                 <Upload className="h-12 w-12 text-gray-400 mb-2" />
+               )}
+               
+               <p className="text-sm text-center text-gray-500">
+                 {editImageModal.preview ? 'Click or drag to change' : 'Drag image here or click to browse'}
+               </p>
+               <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WebP (Max 5MB)</p>
+             </label>
+          </div>
+
+          <div className="flex justify-end gap-3">
+             <button
+                onClick={() => setEditImageModal({ open: false, product: null, preview: null })}
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#27272a] rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={!editImageModal.preview}
+                onClick={() => handleUpdateImage(editImageModal.file)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Save Changes
+              </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Receipt Modal
   const ReceiptModal = () => {
@@ -772,6 +1012,8 @@ const POSSystem = () => {
 
       {/* Receipt Modal */}
       <ReceiptModal />
+      <DeleteModal />
+      <ImageUploadModal />
     </div>
   );
 };
