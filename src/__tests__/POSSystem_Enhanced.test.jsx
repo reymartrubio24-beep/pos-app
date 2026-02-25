@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import POSSystem from '../App';
@@ -10,6 +10,32 @@ describe('POSSystem Enhanced Features', () => {
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
     global.alert = vi.fn();
     vi.spyOn(console, 'log').mockImplementation(() => {});
+    
+    global.fetch = vi.fn((url, options = {}) => {
+      const method = options.method || 'GET';
+      if (url.includes('/api/products') && method === 'GET') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([
+            { id: 'P001', name: 'White Bread', price: 50, barcode: 'WB001', category: 'Bakery', isDeleted: false },
+            { id: 'P002', name: 'Milk', price: 80, barcode: 'MLK001', category: 'Dairy', isDeleted: false }
+          ])
+        });
+      }
+      if (url.includes('/api/products') && method === 'PUT') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ id: 'P001', name: 'White Bread', price: 50, barcode: 'WB001', category: 'Bakery', isDeleted: false })
+        });
+      }
+      if (url.includes('/api/products') && method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ id: 'P999', name: 'New Image Product', price: 150, barcode: 'IMG123', category: 'General', isDeleted: false })
+        });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve([]) });
+    });
   });
 
   afterEach(() => {

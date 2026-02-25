@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, createEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import POSSystem from '../App';
@@ -14,6 +14,33 @@ describe('POSSystem', () => {
     
     // Mock window.alert
     global.alert = vi.fn();
+    
+    // Mock fetch for backend API
+    global.fetch = vi.fn((url, options = {}) => {
+      const method = options.method || 'GET';
+      if (url.includes('/api/products') && method === 'GET') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([
+            { id: 'P001', name: 'White Bread', price: 50, barcode: 'WB001', category: 'Bakery', isDeleted: false },
+            { id: 'P002', name: 'Milk', price: 80, barcode: 'MLK001', category: 'Dairy', isDeleted: false }
+          ])
+        });
+      }
+      if (url.includes('/api/products') && method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ id: 'P999', name: 'New Image Product', price: 150, barcode: 'IMG123', category: 'General', isDeleted: false, image: 'blob:mock-url' })
+        });
+      }
+      if (url.includes('/api/products') && method === 'PUT') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ id: 'P001', name: 'White Bread', price: 50, barcode: 'WB001', category: 'Bakery', isDeleted: false })
+        });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve([]) });
+    });
     
     // Clear document classes
     document.documentElement.className = '';

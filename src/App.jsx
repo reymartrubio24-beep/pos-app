@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingCart, BarChart3, Package, Settings, User, Search, Plus, Minus, Trash2, DollarSign, Calendar, TrendingUp, Clock, CheckCircle, Moon, Sun, Upload, X, Image as ImageIcon, Edit, AlertTriangle, History } from 'lucide-react';
+import Footer from './components/Footer';
 
 const POSSystem = () => {
   // State Management
   const [activeView, setActiveView] = useState('pos');
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   // Fetch products from backend
   useEffect(() => {
@@ -998,85 +999,99 @@ const POSSystem = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-[#1A1A1D] transition-colors duration-200 font-sans">
-      {/* Header */}
-      <div className="bg-white dark:bg-[#1A1A1D] border-b-2 border-gray-200 dark:border-gray-600 shadow-sm transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Point of Sale System</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Small Retail Store Management</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hidden md:flex">
-                <Clock size={16} />
-                <span>{new Date().toLocaleDateString()}</span>
+    <>
+      <div className="min-h-screen bg-gray-100 dark:bg-[#1A1A1D] transition-colors duration-200 font-sans flex flex-col">
+        {/* Header */}
+        <div className="bg-white dark:bg-[#1A1A1D] border-b-2 border-gray-200 dark:border-gray-600 shadow-sm transition-colors duration-200">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="relative group">
+                  <img 
+                    src="/logo3.png" 
+                    alt="Logo" 
+                    className="w-16 h-16 object-contain transition-all duration-700 ease-in-out transform group-hover:scale-90 group-hover:rotate-[360deg] cursor-pointer dark:drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]"
+                  />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Point of Sale System</h1>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Small Retail Store Management</p>
+                </div>
               </div>
-              <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-2 rounded-lg bg-gray-100 dark:bg-[#1A1A1D] text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-[#27272a] transition-colors"
-                title="Toggle Dark Mode"
-              >
-                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hidden md:flex">
+                  <Clock size={16} />
+                  <span>{new Date().toLocaleDateString()}</span>
+                </div>
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className="p-2 rounded-lg bg-gray-100 dark:bg-[#1A1A1D] text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-[#27272a] transition-colors"
+                  title="Toggle Dark Mode"
+                >
+                  {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Navigation */}
-      <div className="bg-white dark:bg-[#1A1A1D] border-b-2 border-gray-200 dark:border-gray-600 transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <nav className="flex gap-1 overflow-x-auto">
-            <button
-              onClick={() => setActiveView('pos')}
-              className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors whitespace-nowrap ${
-                activeView === 'pos'
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              <ShoppingCart size={20} />
-              Point of Sale
-            </button>
-            <button
-              onClick={() => setActiveView('monitoring')}
-              className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors whitespace-nowrap ${
-                activeView === 'monitoring'
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              <BarChart3 size={20} />
-              Sales Monitoring
-            </button>
-            <button
-              onClick={() => setActiveView('products')}
-              className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors whitespace-nowrap ${
-                activeView === 'products'
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              <Package size={20} />
-              Product Management
-            </button>
-          </nav>
+        {/* Navigation */}
+        <div className="bg-white dark:bg-[#1A1A1D] border-b-2 border-gray-200 dark:border-gray-600 transition-colors duration-200">
+          <div className="max-w-7xl mx-auto px-6">
+            <nav className="flex gap-1 overflow-x-auto">
+              <button
+                onClick={() => setActiveView('pos')}
+                className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors whitespace-nowrap ${
+                  activeView === 'pos'
+                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
+              >
+                <ShoppingCart size={20} />
+                Point of Sale
+              </button>
+              <button
+                onClick={() => setActiveView('monitoring')}
+                className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors whitespace-nowrap ${
+                  activeView === 'monitoring'
+                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
+              >
+                <BarChart3 size={20} />
+                Sales Monitoring
+              </button>
+              <button
+                onClick={() => setActiveView('products')}
+                className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors whitespace-nowrap ${
+                  activeView === 'products'
+                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
+              >
+                <Package size={20} />
+                Product Management
+              </button>
+            </nav>
+          </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-6 h-[calc(100vh-180px)]">
-        {activeView === 'pos' && POSView()}
-        {activeView === 'monitoring' && SalesMonitoringView()}
-        {activeView === 'products' && ProductManagementView()}
-      </div>
+        {/* Main Content — flex-grow to push footer down */}
+        <div className="w-full max-w-7xl mx-auto px-6 py-6 flex-1">
+          {activeView === 'pos' && POSView()}
+          {activeView === 'monitoring' && SalesMonitoringView()}
+          {activeView === 'products' && ProductManagementView()}
+        </div>
 
-      {/* Receipt Modal */}
-      <ReceiptModal />
-      <DeleteModal />
-      <ImageUploadModal />
-    </div>
+        {/* Modals (inside main container for proper event bubbling) */}
+        <ReceiptModal />
+        <DeleteModal />
+        <ImageUploadModal />
+        
+        {/* Footer — Inside flex container */}
+        <Footer />
+      </div>
+    </>
   );
 };
 

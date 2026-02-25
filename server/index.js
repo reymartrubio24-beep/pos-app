@@ -54,40 +54,60 @@ app.post('/api/products', upload.single('image'), (req, res) => {
   const { name, price, barcode, category } = req.body;
   const image = req.file ? `http://localhost:${PORT}/uploads/${req.file.filename}` : null;
   
-  // Generate ID
-  db.get("SELECT id FROM products ORDER BY id DESC LIMIT 1", (err, rowLast) => {
+  // Server-side validation
+  const numericPrice = parseFloat(price);
+  if (!name || isNaN(numericPrice) || numericPrice < 0) {
+    return res.status(400).json({ error: "Invalid product data: name and a non-negative numeric price are required." });
+  }
+  if (!barcode) {
+    return res.status(400).json({ error: "Barcode is required." });
+  }
+  
+  // Prevent duplicate barcode entries
+  db.get("SELECT id FROM products WHERE barcode = ?", [barcode], (dupErr, dupRow) => {
+    if (dupErr) {
+      return res.status(500).json({ error: dupErr.message });
+    }
+    if (dupRow) {
+      return res.status(409).json({ error: "A product with this barcode already exists." });
+    }
+    
+    // Generate next ID using numeric ordering of the suffix to avoid lexicographic issues
+    const lastIdSql = "SELECT id FROM products WHERE id LIKE 'P%' ORDER BY CAST(SUBSTR(id, 2) AS INTEGER) DESC LIMIT 1";
+    db.get(lastIdSql, (err, rowLast) => {
       let newId = 'P001';
-      if (rowLast && rowLast.id.startsWith('P')) {
-            const lastNumStr = rowLast.id.substring(1);
-            if (!isNaN(lastNumStr)) {
-                const lastNum = parseInt(lastNumStr);
-                newId = `P${String(lastNum + 1).padStart(3, '0')}`;
-            } else {
-                 newId = `P${Date.now()}`; // Fallback
-            }
+      if (rowLast && typeof rowLast.id === 'string' && rowLast.id.startsWith('P')) {
+        const lastNumStr = rowLast.id.substring(1);
+        const lastNum = parseInt(lastNumStr, 10);
+        if (!isNaN(lastNum)) {
+          const nextNum = lastNum + 1;
+          const width = Math.max(lastNumStr.length, 3);
+          newId = `P${String(nextNum).padStart(width, '0')}`;
+        } else {
+          newId = `P${Date.now()}`;
+        }
       } else if (rowLast) {
-          // If ID format is different, fallback
-           newId = `P${Date.now()}`;
+        newId = `P${Date.now()}`;
       }
       
       const sql = "INSERT INTO products (id, name, price, barcode, category, image, isDeleted) VALUES (?, ?, ?, ?, ?, ?, 0)";
-      const params = [newId, name, parseFloat(price), barcode, category, image];
+      const params = [newId, name, numericPrice, barcode, category, image];
       
-      db.run(sql, params, function(err) {
-        if (err) {
-          res.status(400).json({ error: err.message });
-          return;
+      db.run(sql, params, function(insertErr) {
+        if (insertErr) {
+          return res.status(400).json({ error: insertErr.message });
         }
         res.json({
           id: newId,
           name,
-          price: parseFloat(price),
+          price: numericPrice,
           barcode,
           category,
           image,
           isDeleted: false
         });
       });
+    });
   });
 });
 
