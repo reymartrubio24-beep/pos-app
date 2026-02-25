@@ -27,21 +27,6 @@ export default defineConfig([
     },
   },
   {
-    files: ["**/*.test.{js,jsx}"],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-        vi: "readonly",
-        it: "readonly",
-        describe: "readonly",
-        expect: "readonly",
-        beforeEach: "readonly",
-        afterEach: "readonly",
-      },
-    },
-  },
-  {
     files: ["server/**/*.js"],
     languageOptions: {
       ecmaVersion: 2020,
