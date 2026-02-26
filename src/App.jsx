@@ -1010,7 +1010,7 @@ const POSSystem = () => {
                   <img 
                     src="/logo3.png" 
                     alt="Logo" 
-                    className="w-16 h-16 object-contain transition-all duration-700 ease-in-out transform group-hover:scale-90 group-hover:rotate-[360deg] cursor-pointer dark:drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]"
+                    className="w-16 h-16 object-contain transition-all duration-700 ease-in-out transform group-hover:scale-90 group-hover:rotate-[360deg] cursor-pointer drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
                   />
                 </div>
                 <div>
