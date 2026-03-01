@@ -12,7 +12,8 @@ const SalesMonitoringView = ({
   serverAnalytics,
   todaySales,
   weekSales,
-  serverAuditLogs
+  serverAuditLogs,
+  onClearLogs
 }) => {
   const dailyStats = {};
   transactions.forEach(t => {
@@ -226,6 +227,13 @@ const SalesMonitoringView = ({
             </h3>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">{serverAuditLogs.length} records</span>
+              <button
+                onClick={onClearLogs}
+                className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 font-semibold transition-colors"
+                title="Clear all server audit logs"
+              >
+                Clear History
+              </button>
               <button
                 onClick={() => {
                   const header = ['timestamp','action','details','user_id','table_name','action_type','old_values','new_values'];

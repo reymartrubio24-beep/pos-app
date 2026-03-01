@@ -17,7 +17,9 @@ const ProductManagementView = ({
   addNewProduct,
   setDeleteConfirmation,
   setEditImageModal,
-  auditLogs
+  setEditProductModal,
+  auditLogs,
+  onClearLogs
 }) => {
   return (
     <div className="space-y-6">
@@ -27,7 +29,6 @@ const ProductManagementView = ({
           <span>You are in view-only mode. Please login as the owner using the button in the header to add, update, or delete products.</span>
         </div>
       )}
-      {/* Add New Product Form */}
       <div className="bg-white dark:bg-[#1A1A1D] rounded-lg border-2 border-gray-200 dark:border-gray-600 p-6 transition-colors duration-200">
         <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
           <Plus size={24} />
@@ -135,9 +136,6 @@ const ProductManagementView = ({
                 </div>
               )}
             </label>
-            <p className="text-xs text-gray-500 mt-2">
-              Note: Uploaded images are stored securely on the server.
-            </p>
           </div>
         </div>
         <button
@@ -149,7 +147,6 @@ const ProductManagementView = ({
         </button>
       </div>
 
-      {/* Products List */}
       <div className="bg-white dark:bg-[#1A1A1D] rounded-lg border-2 border-gray-200 dark:border-gray-600 overflow-hidden transition-colors duration-200">
         <div className="bg-gray-50 dark:bg-[#1A1A1D] px-6 py-4 border-b-2 border-gray-200 dark:border-gray-600">
           <h3 className="text-xl font-bold text-gray-800 dark:text-white">Product Inventory</h3>
@@ -190,9 +187,11 @@ const ProductManagementView = ({
                   <td className="px-6 py-4 font-semibold text-blue-600 dark:text-blue-400">₱{product.price.toFixed(2)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold
-                      ${product.stock <= 5 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' : 'bg-gray-100 text-gray-700 dark:bg-[#27272a] dark:text-gray-300'}`}>
-                      {product.stock ?? 0}
-                      {product.stock <= 5 && <AlertTriangle size={14} />}
+                      ${product.stock <= 0 ? 'bg-red-600 text-white' : 
+                        product.stock <= 5 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' : 
+                        'bg-gray-100 text-gray-700 dark:bg-[#27272a] dark:text-gray-300'}`}>
+                      {product.stock <= 0 ? 'SOLD OUT' : (product.stock ?? 0)}
+                      {product.stock > 0 && product.stock <= 5 && <AlertTriangle size={14} />}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -200,8 +199,15 @@ const ProductManagementView = ({
                       {auth.role === 'owner' ? (
                         <>
                           <button
-                            onClick={() => setEditImageModal({ open: true, product, preview: getImageUrl(product.image) })}
+                            onClick={() => setEditProductModal({ open: true, product })}
                             className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"
+                            title="Edit Details"
+                          >
+                            <Edit size={18} />
+                          </button>
+                          <button
+                            onClick={() => setEditImageModal({ open: true, product, preview: getImageUrl(product.image) })}
+                            className="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg"
                             title="Update Image"
                           >
                             <ImageIcon size={18} />
@@ -233,7 +239,16 @@ const ProductManagementView = ({
                 <History size={24} />
                 Audit Log
             </h3>
-            <span className="text-sm text-gray-500">{auditLogs.length} records</span>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-500">{auditLogs.length} records</span>
+              <button 
+                onClick={onClearLogs}
+                className="text-xs text-red-600 hover:text-red-700 font-semibold px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors"
+                title="Clear all logs"
+              >
+                Clear History
+              </button>
+            </div>
          </div>
          <div className="max-h-60 overflow-y-auto">
              {auditLogs.length === 0 ? (

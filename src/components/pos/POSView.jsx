@@ -146,29 +146,48 @@ const POSView = ({
 
         <div className="flex-1 overflow-y-auto bg-white dark:bg-[#1A1A1D] rounded-lg border-2 border-gray-200 dark:border-gray-600 p-4 transition-colors duration-200">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {filteredProducts.map(product => (
-              <button
-                key={product.id}
-                onClick={() => addToCart(product)}
-                className="flex flex-col h-full p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg transition-all text-left bg-white dark:bg-[#1A1A1D]"
-              >
-                <div className="w-full aspect-square mb-2 bg-gray-100 dark:bg-[#1A1A1D] rounded overflow-hidden flex items-center justify-center relative">
-                  {product.image ? (
-                    <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 w-full h-full flex items-center justify-center">
-                      <Package size={32} className="text-blue-600 dark:text-blue-400" />
+            {filteredProducts.map(product => {
+              const isSoldOut = product.stock <= 0;
+              return (
+                <button
+                  key={product.id}
+                  onClick={() => !isSoldOut && addToCart(product)}
+                  disabled={isSoldOut}
+                  className={`flex flex-col h-full p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg transition-all text-left bg-white dark:bg-[#1A1A1D] relative ${isSoldOut ? 'opacity-75 cursor-not-allowed' : ''}`}
+                >
+                  <div className="w-full aspect-square mb-2 bg-gray-100 dark:bg-[#1A1A1D] rounded overflow-hidden flex items-center justify-center relative">
+                    {product.image ? (
+                      <img src={getImageUrl(product.image)} alt={product.name} className={`w-full h-full object-cover ${isSoldOut ? 'grayscale' : ''}`} />
+                    ) : (
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 w-full h-full flex items-center justify-center">
+                        <Package size={32} className="text-blue-600 dark:text-blue-400" />
+                      </div>
+                    )}
+                    
+                    {isSoldOut && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+                          Sold Out
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1 truncate w-full">{product.name}</div>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">{product.category}</div>
+                    <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isSoldOut ? 'bg-red-100 text-red-600 dark:bg-red-900/40' : 'bg-gray-100 text-gray-600 dark:bg-gray-800'}`}>
+                      {isSoldOut ? 'Out of Stock' : `Stock: ${product.stock}`}
                     </div>
-                  )}
-                </div>
-                <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1 truncate w-full">{product.name}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">{product.category}</div>
-                <div className="mt-auto">
-                  <div className="text-lg font-bold text-blue-600 dark:text-blue-400">₱{product.price.toFixed(2)}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{product.id}</div>
-                </div>
-              </button>
-            ))}
+                  </div>
+                  <div className="mt-auto">
+                    <div className={`text-lg font-bold ${isSoldOut ? 'text-gray-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                      ₱{product.price.toFixed(2)}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{product.id}</div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -70,3 +70,13 @@ export const getAuditLogs = async (req, res) => {
   const logs = await all(`SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT 500`);
   res.json(logs);
 };
+
+export const clearAuditLogs = async (req, res) => {
+  try {
+    await run(`DELETE FROM audit_logs`);
+    await run(`INSERT INTO audit_logs (action, details, user_id) VALUES (?,?,?)`, ['LOGS_CLEAR', `Audit logs cleared by ${req.user.username}`, req.user.id]);
+    res.json({ message: 'Audit logs cleared successfully' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};

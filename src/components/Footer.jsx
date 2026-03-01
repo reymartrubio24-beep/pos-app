@@ -24,7 +24,7 @@ const Footer = () => {
           </div>
           <div className="flex items-center gap-6">
             <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-              Retail Management v1.0.0
+              Retail Management v1.0
             </span>
           </div>
         </div>

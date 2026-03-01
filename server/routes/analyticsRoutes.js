@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get('/analytics', authenticate, authorize(['owner']), salesController.getAnalytics);
 router.get('/audit-logs', authenticate, authorize(['owner']), salesController.getAuditLogs);
+router.delete('/audit-logs', authenticate, authorize(['owner']), salesController.clearAuditLogs);
 
 export default router;

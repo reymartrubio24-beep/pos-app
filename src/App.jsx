@@ -18,6 +18,7 @@ import UsersManagementView from './components/users/UsersManagementView';
 import DeleteModal from './components/modals/DeleteModal';
 import ImageUploadModal from './components/modals/ImageUploadModal';
 import ReceiptModal from './components/modals/ReceiptModal';
+import EditProductModal from './components/modals/EditProductModal';
 
 // Register ChartJS
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend);
@@ -59,6 +60,7 @@ const POSSystem = () => {
   // Modal States
   const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, product: null });
   const [editImageModal, setEditImageModal] = useState({ open: false, product: null, preview: null });
+  const [editProductModal, setEditProductModal] = useState({ open: false, product: null });
 
   // New Product Form State
   const [newProduct, setNewProduct] = useState({
@@ -136,8 +138,17 @@ const POSSystem = () => {
   };
 
   const addToCart = (product) => {
+    if (product.stock <= 0) {
+      alert('This item is currently sold out.');
+      return;
+    }
+
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
+      if (existingItem.quantity >= product.stock) {
+        alert(`Only ${product.stock} units available in stock.`);
+        return;
+      }
       setCart(cart.map(item =>
         item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
       ));
@@ -147,9 +158,18 @@ const POSSystem = () => {
   };
 
   const updateQuantity = (id, delta) => {
-    setCart(cart.map(item =>
-      item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-    ).filter(item => item.quantity > 0));
+    setCart(cart.map(item => {
+      if (item.id === id) {
+        const product = products.find(p => p.id === id);
+        const newQty = item.quantity + delta;
+        if (delta > 0 && product && newQty > product.stock) {
+          alert(`Only ${product.stock} units available in stock.`);
+          return item;
+        }
+        return { ...item, quantity: Math.max(1, newQty) };
+      }
+      return item;
+    }).filter(item => item.quantity > 0));
   };
 
   const removeFromCart = (id) => {
@@ -256,6 +276,20 @@ const POSSystem = () => {
     }
   };
 
+  const handleUpdateProduct = async (id, updatedData) => {
+    if (auth.role !== 'owner') return;
+    try {
+      const updated = await apiService.updateProduct(auth.token, id, updatedData);
+      setProducts(products.map(p => p.id === id ? updated : p));
+      logAction('PRODUCT_UPDATE', `Updated product details: ${updated.name} (${id})`);
+      setEditProductModal({ open: false, product: null });
+      return updated;
+    } catch (error) {
+      alert(`Error updating product: ${error.message}`);
+      throw error;
+    }
+  };
+
   const addCashier = async () => {
     const username = newUserUsernameRef.current?.value || '';
     const password = newUserPasswordRef.current?.value || '';
@@ -278,6 +312,20 @@ const POSSystem = () => {
       setUsers(users.filter(u => u.id !== id));
     } catch (e) {
       alert('Failed to remove user');
+    }
+  };
+
+  const clearAllLogs = async () => {
+    if (!window.confirm('Are you sure you want to clear all audit logs? This action cannot be undone.')) return;
+    
+    try {
+      if (auth.token && auth.role === 'owner') {
+        await apiService.clearAuditLogs(auth.token);
+        setServerAuditLogs([]);
+      }
+      setAuditLogs([]);
+    } catch (e) {
+      alert(`Error clearing logs: ${e.message}`);
     }
   };
 
@@ -413,7 +461,7 @@ const POSSystem = () => {
                   auth={auth} transactions={transactions} lowStockItems={lowStockItems}
                   lowThreshold={lowThreshold} setLowThreshold={setLowThreshold}
                   serverAnalytics={serverAnalytics} todaySales={todaySales} weekSales={weekSales}
-                  serverAuditLogs={serverAuditLogs}
+                  serverAuditLogs={serverAuditLogs} onClearLogs={clearAllLogs}
                 />
               </ErrorBoundary>
             )}
@@ -422,7 +470,8 @@ const POSSystem = () => {
                 auth={auth} products={products} newProduct={newProduct} setNewProduct={setNewProduct}
                 imagePreview={imagePreview} setImagePreview={setImagePreview} onDrag={onDrag} onDrop={onDrop} dragActive={dragActive}
                 handleImageChange={handleImageChange} fileInputRef={fileInputRef} addNewProduct={addNewProduct}
-                setDeleteConfirmation={setDeleteConfirmation} setEditImageModal={setEditImageModal} auditLogs={auditLogs}
+                setDeleteConfirmation={setDeleteConfirmation} setEditImageModal={setEditImageModal} 
+                setEditProductModal={setEditProductModal} auditLogs={auditLogs} onClearLogs={clearAllLogs}
               />
             )}
             {activeView === 'users' && (
@@ -441,6 +490,12 @@ const POSSystem = () => {
       <ReceiptModal showReceipt={showReceipt} currentReceipt={currentReceipt} setShowReceipt={setShowReceipt} />
       <DeleteModal deleteConfirmation={deleteConfirmation} setDeleteConfirmation={setDeleteConfirmation} handleSoftDelete={handleSoftDelete} />
       <ImageUploadModal editImageModal={editImageModal} setEditImageModal={setEditImageModal} handleUpdateImage={handleUpdateImage} />
+      <EditProductModal 
+        isOpen={editProductModal.open} 
+        onClose={() => setEditProductModal({ open: false, product: null })}
+        onSave={handleUpdateProduct}
+        product={editProductModal.product}
+      />
 
       {loginModalOpen && (
         <div className="fixed inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-[#0b1220] dark:to-[#0b1220] flex items-center justify-center z-50 p-4">

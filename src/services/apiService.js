@@ -20,6 +20,15 @@ export const apiService = {
     return { analytics, logs, lowStock: lowStock.items || [] };
   },
 
+  clearAuditLogs: async (token) => {
+    const res = await fetch(`${BACKEND_URL}/api/audit-logs`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to clear audit logs');
+    return await res.json();
+  },
+
   fetchUsers: async (token) => {
     const res = await fetch(`${BACKEND_URL}/api/users`, { headers: { Authorization: `Bearer ${token}` } });
     return res.ok ? await res.json() : [];
@@ -65,7 +74,6 @@ export const apiService = {
       }),
     });
     // Note: The total calculation should ideally be consistent. The original app passes transaction.amountPaid.
-    // I'll adjust this in App.jsx to match original logic.
   },
 
   // Fixed version of processPayment to match original logic
