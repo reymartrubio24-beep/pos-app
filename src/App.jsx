@@ -74,6 +74,13 @@ const POSSystem = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+  const [showOwnerLogoutTransition, setShowOwnerLogoutTransition] = useState(false);
+
+  const generateBarcode = () => {
+    const timestampPart = Date.now().toString();
+    const randomPart = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return (timestampPart + randomPart).slice(-12);
+  };
 
   // --- Effects ---
 
@@ -222,13 +229,17 @@ const POSSystem = () => {
 
   const addNewProduct = async () => {
     if (auth.role !== 'owner') { setLoginModalOpen(true); return; }
-    if (!newProduct.name || !newProduct.price || !newProduct.barcode) { alert('Please fill in all required fields'); return; }
+    if (!newProduct.name || !newProduct.price) { alert('Please fill in all required fields'); return; }
+
+    const finalBarcode = (newProduct.barcode && newProduct.barcode.trim())
+      ? newProduct.barcode.trim()
+      : generateBarcode();
 
     try {
       const formData = new FormData();
       formData.append('name', newProduct.name);
       formData.append('price', parseFloat(newProduct.price).toString());
-      formData.append('barcode', newProduct.barcode);
+      formData.append('barcode', finalBarcode);
       formData.append('category', newProduct.category || 'General');
       if (newProduct.stock) formData.append('stock', newProduct.stock);
       if (newProduct.imageFile) formData.append('image', newProduct.imageFile);
@@ -402,8 +413,20 @@ const POSSystem = () => {
                 <button
                   onClick={() => {
                     if (auth.token) {
-                      localStorage.clear();
-                      setAuth({ token: null, role: null, username: null });
+                      if (auth.role === 'owner') {
+                        setShowOwnerLogoutTransition(true);
+                        setTimeout(() => {
+                          localStorage.clear();
+                          setAuth({ token: null, role: null, username: null });
+                          setActiveView('pos');
+                          setShowOwnerLogoutTransition(false);
+                          setLoginModalOpen(true);
+                        }, 800);
+                      } else {
+                        localStorage.clear();
+                        setAuth({ token: null, role: null, username: null });
+                        setLoginModalOpen(true);
+                      }
                     } else {
                       setLoginModalOpen(true);
                     }
@@ -485,6 +508,22 @@ const POSSystem = () => {
 
         <Footer />
       </div>
+
+      {showOwnerLogoutTransition && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#111317] rounded-2xl px-8 py-6 shadow-2xl flex items-center gap-4">
+            <div className="w-7 h-7 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+            <div className="flex flex-col">
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 tracking-wide">
+                Signing out owner dashboard...
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Returning to login
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modals */}
       <ReceiptModal showReceipt={showReceipt} currentReceipt={currentReceipt} setShowReceipt={setShowReceipt} />
