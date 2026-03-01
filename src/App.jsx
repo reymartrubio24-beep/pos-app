@@ -19,6 +19,7 @@ import DeleteModal from './components/modals/DeleteModal';
 import ImageUploadModal from './components/modals/ImageUploadModal';
 import ReceiptModal from './components/modals/ReceiptModal';
 import EditProductModal from './components/modals/EditProductModal';
+import IconButton from './components/ui/IconButton';
 
 // Register ChartJS
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend);
@@ -407,10 +408,14 @@ const POSSystem = () => {
                     <span className="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800">{auth.role}</span>
                   </div>
                 )}
-                <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-lg bg-gray-100 dark:bg-[#1A1A1D] text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-[#27272a]" title="Toggle Dark Mode">
+                <IconButton
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  label="Toggle dark mode"
+                  className="p-2 rounded-lg bg-gray-100 dark:bg-[#1A1A1D] text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-[#27272a]"
+                >
                   {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-                </button>
-                <button
+                </IconButton>
+                <IconButton
                   onClick={() => {
                     if (auth.token) {
                       if (auth.role === 'owner') {
@@ -431,11 +436,11 @@ const POSSystem = () => {
                       setLoginModalOpen(true);
                     }
                   }}
+                  label={auth.token ? 'Logout' : 'Login'}
                   className={`p-2 rounded-lg ${auth.token ? 'bg-red-50 text-red-600 dark:bg-red-900/20' : 'bg-gray-100 dark:bg-[#1A1A1D]'}`}
-                  title={auth.token ? 'Logout' : 'Login'}
                 >
                   <User size={20} />
-                </button>
+                </IconButton>
               </div>
             </div>
           </div>

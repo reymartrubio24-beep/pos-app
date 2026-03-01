@@ -1,6 +1,8 @@
 import React from 'react';
 import { Plus, AlertTriangle, Upload, X, Trash2, Image as ImageIcon, History, Edit } from 'lucide-react';
 import { getImageUrl } from '../../utils/formatters';
+import PrimaryButton from '../ui/PrimaryButton';
+import IconButton from '../ui/IconButton';
 
 const ProductManagementView = ({
   auth,
@@ -138,13 +140,13 @@ const ProductManagementView = ({
             </label>
           </div>
         </div>
-        <button
+        <PrimaryButton
           onClick={addNewProduct}
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2"
+          className="mt-4 py-2 px-6 inline-flex items-center gap-2"
         >
           <Plus size={20} />
           Add Product
-        </button>
+        </PrimaryButton>
       </div>
 
       <div className="bg-white dark:bg-[#1A1A1D] rounded-lg border-2 border-gray-200 dark:border-gray-600 overflow-hidden transition-colors duration-200">
@@ -198,27 +200,27 @@ const ProductManagementView = ({
                     <div className="flex gap-2">
                       {auth.role === 'owner' ? (
                         <>
-                          <button
+                          <IconButton
                             onClick={() => setEditProductModal({ open: true, product })}
+                            label="Edit product details"
                             className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"
-                            title="Edit Details"
                           >
                             <Edit size={18} />
-                          </button>
-                          <button
+                          </IconButton>
+                          <IconButton
                             onClick={() => setEditImageModal({ open: true, product, preview: getImageUrl(product.image) })}
+                            label="Update product image"
                             className="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg"
-                            title="Update Image"
                           >
                             <ImageIcon size={18} />
-                          </button>
-                          <button
+                          </IconButton>
+                          <IconButton
                             onClick={() => setDeleteConfirmation({ open: true, product })}
+                            label="Delete product"
                             className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                            title="Delete Product"
                           >
                             <Trash2 size={18} />
-                          </button>
+                          </IconButton>
                         </>
                       ) : (
                         <span className="text-xs text-gray-400 italic">Owner only</span>
@@ -241,13 +243,13 @@ const ProductManagementView = ({
             </h3>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-500">{auditLogs.length} records</span>
-              <button 
+              <IconButton 
                 onClick={onClearLogs}
+                label="Clear all logs"
                 className="text-xs text-red-600 hover:text-red-700 font-semibold px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors"
-                title="Clear all logs"
               >
                 Clear History
-              </button>
+              </IconButton>
             </div>
          </div>
          <div className="max-h-60 overflow-y-auto">

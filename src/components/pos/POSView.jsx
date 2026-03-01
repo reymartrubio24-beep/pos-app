@@ -1,6 +1,8 @@
 import React from 'react';
 import { ShoppingCart, Search, Package, Trash2, Minus, Plus, DollarSign } from 'lucide-react';
 import { getImageUrl } from '../../utils/formatters';
+import PrimaryButton from '../ui/PrimaryButton';
+import IconButton from '../ui/IconButton';
 
 const POSView = ({
   cart,
@@ -44,29 +46,32 @@ const POSView = ({
                       <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{item.name}</div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">₱{item.price.toFixed(2)} each</div>
                     </div>
-                    <button
+                    <IconButton
                       onClick={() => removeFromCart(item.id)}
+                      label="Remove item from cart"
                       className="text-red-500 hover:text-red-700 dark:hover:text-red-400"
                     >
                       <Trash2 size={18} />
-                    </button>
+                    </IconButton>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <button
+                      <IconButton
                         onClick={() => updateQuantity(item.id, -1)}
+                        label="Decrease quantity"
                         className="w-8 h-8 rounded bg-gray-200 dark:bg-[#1A1A1D] hover:bg-gray-300 dark:hover:bg-[#27272a] flex items-center justify-center text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600"
                       >
                         <Minus size={16} />
-                      </button>
+                      </IconButton>
                       <span className="w-12 text-center font-semibold text-gray-800 dark:text-gray-200">{item.quantity}</span>
-                      <button
+                      <IconButton
                         onClick={() => updateQuantity(item.id, 1)}
+                        label="Increase quantity"
                         className="w-8 h-8 rounded bg-gray-200 dark:bg-[#1A1A1D] hover:bg-gray-300 dark:hover:bg-[#27272a] flex items-center justify-center text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600"
                       >
                         <Plus size={16} />
-                      </button>
+                      </IconButton>
                     </div>
                     <div className="font-bold text-blue-600 dark:text-blue-400">
                       ₱{(item.price * item.quantity).toFixed(2)}
@@ -118,13 +123,13 @@ const POSView = ({
               </div>
             )}
 
-            <button
+            <PrimaryButton
               onClick={processPayment}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               <DollarSign size={20} />
               Complete Payment
-            </button>
+            </PrimaryButton>
           </div>
         )}
       </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import PrimaryButton from '../ui/PrimaryButton';
 
 const UsersManagementView = ({
   users,
@@ -25,7 +26,9 @@ const UsersManagementView = ({
             placeholder="Password"
             className="px-4 py-2 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] text-gray-800 dark:text-white rounded-lg focus:border-blue-500 focus:outline-none"
           />
-          <button onClick={addCashier} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">Add Cashier</button>
+          <PrimaryButton onClick={addCashier} className="px-4 py-2">
+            Add Cashier
+          </PrimaryButton>
         </div>
       </div>
       <div className="bg-white dark:bg-[#1A1A1D] rounded-lg border-2 border-gray-200 dark:border-gray-600 overflow-hidden">
@@ -52,7 +55,9 @@ const UsersManagementView = ({
                   <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{new Date(u.created_at).toLocaleString()}</td>
                   <td className="px-6 py-4">
                     {u.role !== 'owner' ? (
-                      <button onClick={() => removeUser(u.id)} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Remove</button>
+                      <PrimaryButton onClick={() => removeUser(u.id)} className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded">
+                        Remove
+                      </PrimaryButton>
                     ) : (
                       <span className="text-xs text-gray-400">Protected</span>
                     )}
