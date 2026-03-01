@@ -5,7 +5,11 @@ import POSSystem from '../App';
 
 describe('POSSystem Enhanced Features', () => {
   beforeEach(() => {
-    vi.spyOn(Storage.prototype, 'getItem');
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => {
+      if (key === 'role') return 'owner';
+      if (key === 'token') return 'mock-token';
+      return null;
+    });
     vi.spyOn(Storage.prototype, 'setItem');
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
     global.alert = vi.fn();

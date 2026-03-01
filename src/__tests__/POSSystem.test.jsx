@@ -79,6 +79,13 @@ describe('POSSystem', () => {
   });
 
   it('handles image upload and product creation correctly', async () => {
+    // Mock owner role
+    Storage.prototype.getItem.mockImplementation((key) => {
+      if (key === 'role') return 'owner';
+      if (key === 'token') return 'mock-token';
+      return null;
+    });
+
     const user = userEvent.setup();
     render(<POSSystem />);
     
