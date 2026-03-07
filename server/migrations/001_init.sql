@@ -1,0 +1,68 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL CHECK (role IN ('owner','cashier')),
+  failed_attempts INTEGER DEFAULT 0,
+  locked_until DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS products (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  price REAL NOT NULL,
+  barcode TEXT UNIQUE NOT NULL,
+  category TEXT DEFAULT 'General',
+  image TEXT,
+  stock INTEGER DEFAULT 0,
+  isDeleted INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS sales (
+  id TEXT PRIMARY KEY,
+  date DATETIME NOT NULL,
+  subtotal REAL NOT NULL,
+  tax REAL NOT NULL,
+  total REAL NOT NULL,
+  amount_paid REAL NOT NULL,
+  change REAL NOT NULL,
+  payment_method TEXT DEFAULT 'cash',
+  cashier_id INTEGER,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS sale_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sale_id TEXT NOT NULL,
+  product_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  price REAL NOT NULL,
+  quantity INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+  action TEXT NOT NULL,
+  details TEXT,
+  user_id INTEGER,
+  table_name TEXT,
+  action_type TEXT,
+  old_values TEXT,
+  new_values TEXT
+);
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  token TEXT NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  token TEXT NOT NULL,
+  expires_at DATETIME NOT NULL,
+  used INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

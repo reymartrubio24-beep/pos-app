@@ -26,5 +26,7 @@ coverage
 
 # Server
 server/pos.db
+server/db/pos.db
+server/db/pos.db-journal
 server/uploads/*
 !server/uploads/.gitkeep
