@@ -1020,3 +1020,7 @@ body {
 .sidebar-brand-wrapper:hover .brand-logo {
   transform: scale(1.2);
 }
+
+[data-theme='dark'] .footer-logo img {
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.8));
+}
