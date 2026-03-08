@@ -1,12 +1,13 @@
 import React from 'react';
 
-const UserEditModal = ({ 
+const UserModal = ({ 
   show, 
   onClose, 
-  onUpdate, 
-  editForm, 
-  setEditForm, 
-  updateLoading 
+  onSave, 
+  form, 
+  setForm, 
+  loading,
+  mode = 'edit' // 'edit' or 'create'
 }) => {
   if (!show) return null;
 
@@ -18,14 +19,17 @@ const UserEditModal = ({
       zIndex: 1000, animation: 'fadeIn 0.2s ease'
     }}>
       <div className="premium-card" style={{ width: '100%', maxWidth: '400px', padding: '32px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '24px' }}>Edit User Account</h2>
-        <form onSubmit={onUpdate}>
+        <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '24px' }}>
+          {mode === 'edit' ? 'Edit User Account' : 'Register New Account'}
+        </h2>
+        <form onSubmit={onSave}>
           <div style={{ marginBottom: '16px' }}>
             <label className="input-label" style={{ color: 'var(--text-sub)' }}>Full Name</label>
             <input 
               type="text" className="input-field" 
-              value={editForm.full_name}
-              onChange={(e) => setEditForm({...editForm, full_name: e.target.value})}
+              value={form.full_name}
+              onChange={(e) => setForm({...form, full_name: e.target.value})}
+              placeholder="e.g. Juan Dela Cruz"
               required
             />
           </div>
@@ -33,8 +37,9 @@ const UserEditModal = ({
             <label className="input-label" style={{ color: 'var(--text-sub)' }}>Username</label>
             <input 
               type="text" className="input-field" 
-              value={editForm.username}
-              onChange={(e) => setEditForm({...editForm, username: e.target.value})}
+              value={form.username}
+              onChange={(e) => setForm({...form, username: e.target.value})}
+              placeholder="e.g. juan24"
               required
             />
           </div>
@@ -42,20 +47,24 @@ const UserEditModal = ({
             <label className="input-label" style={{ color: 'var(--text-sub)' }}>Role</label>
             <select 
               className="input-field" 
-              value={editForm.role}
-              onChange={(e) => setEditForm({...editForm, role: e.target.value})}
+              value={form.role}
+              onChange={(e) => setForm({...form, role: e.target.value})}
+              required
             >
               <option value="cashier">Cashier</option>
               <option value="owner">Owner</option>
             </select>
           </div>
           <div style={{ marginBottom: '24px' }}>
-            <label className="input-label" style={{ color: 'var(--text-sub)' }}>New Password (leave blank if unchanged)</label>
+            <label className="input-label" style={{ color: 'var(--text-sub)' }}>
+              {mode === 'edit' ? 'New Password (leave blank if unchanged)' : 'Password'}
+            </label>
             <input 
               type="password" className="input-field" 
               placeholder="••••••••"
-              value={editForm.password}
-              onChange={(e) => setEditForm({...editForm, password: e.target.value})}
+              value={form.password}
+              onChange={(e) => setForm({...form, password: e.target.value})}
+              required={mode === 'create'}
             />
           </div>
           
@@ -73,14 +82,14 @@ const UserEditModal = ({
             </button>
             <button 
               type="submit" 
-              disabled={updateLoading}
+              disabled={loading}
               style={{ 
                 flex: 1, padding: '12px', borderRadius: '10px', 
                 border: 'none', background: 'var(--success)',
                 color: 'white', fontWeight: '600', cursor: 'pointer'
               }}
             >
-              {updateLoading ? 'Saving...' : 'Save Changes'}
+              {loading ? 'Processing...' : mode === 'edit' ? 'Save Changes' : 'Create User'}
             </button>
           </div>
         </form>
@@ -89,4 +98,4 @@ const UserEditModal = ({
   );
 };
 
-export default UserEditModal;
+export default UserModal;

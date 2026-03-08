@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import UserTable from '../components/Users/UserTable';
-import UserEditModal from '../components/Users/UserEditModal';
+import UserModal from '../components/Users/UserModal';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Edit Modal State
-  const [showEditModal, setShowEditModal] = useState(false);
+  // Modal State
+  const [showModal, setShowModal] = useState(false);
+  const [modalMode, setModalMode] = useState('edit'); // 'edit' or 'create'
   const [editingUser, setEditingUser] = useState(null);
-  const [editForm, setEditForm] = useState({
+  const [userForm, setUserForm] = useState({
     username: '',
     full_name: '',
-    role: '',
+    role: 'cashier',
     password: ''
   });
-  const [updateLoading, setUpdateLoading] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -35,35 +36,58 @@ const Users = () => {
     }
   };
 
+  const handleCreateClick = () => {
+    setModalMode('create');
+    setEditingUser(null);
+    setUserForm({
+      username: '',
+      full_name: '',
+      role: 'cashier',
+      password: ''
+    });
+    setShowModal(true);
+  };
+
   const handleEditClick = (user) => {
+    setModalMode('edit');
     setEditingUser(user);
-    setEditForm({
+    setUserForm({
       username: user.username,
       full_name: user.full_name,
       role: user.role,
       password: '' // Leave blank unless changing
     });
-    setShowEditModal(true);
+    setShowModal(true);
   };
 
-  const handleUpdate = async (e) => {
+  const handleSaveUser = async (e) => {
     e.preventDefault();
-    setUpdateLoading(true);
+    setModalLoading(true);
     try {
-      const data = await api.post('/api/users/update.php', {
-        id: editingUser.id,
-        ...editForm
-      });
-      if (data.success) {
-        setShowEditModal(false);
-        fetchUsers();
+      if (modalMode === 'edit') {
+        const data = await api.post('/api/users/update.php', {
+          id: editingUser.id,
+          ...userForm
+        });
+        if (data.success) {
+          setShowModal(false);
+          fetchUsers();
+        } else {
+          alert(data.error || 'Update failed');
+        }
       } else {
-        alert(data.error || 'Update failed');
+        const data = await api.post('/api/users/create.php', userForm);
+        if (data.success) {
+          setShowModal(false);
+          fetchUsers();
+        } else {
+          alert(data.error || 'Creation failed');
+        }
       }
     } catch (err) {
-      alert(err.message || 'Update failed');
+      alert(err.message || 'Operation failed');
     } finally {
-      setUpdateLoading(false);
+      setModalLoading(false);
     }
   };
 
@@ -101,22 +125,32 @@ const Users = () => {
                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
              </svg>
              <input 
-               type="text" 
-               placeholder="Search users..." 
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-               style={{ 
-                 background: 'var(--card-bg)', 
+                type="text" 
+                placeholder="Search users..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ 
+                background: 'var(--card-bg)', 
                  border: '1px solid var(--border-main)', 
                  borderRadius: '10px', 
                  padding: '10px 16px 10px 36px', 
                  color: 'var(--text-main)',
                  fontSize: '13px',
-                 width: '260px',
+                 width: '240px',
                  outline: 'none'
                }}
              />
           </div>
+          <button 
+            className="premium-btn" 
+            onClick={handleCreateClick}
+            style={{ padding: '10px 20px' }}
+          >
+            <svg style={{ width: '18px', height: '18px', marginRight: '8px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+            </svg>
+            Add User
+          </button>
         </div>
       </div>
 
@@ -129,13 +163,14 @@ const Users = () => {
         />
       </div>
 
-      <UserEditModal 
-        show={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onUpdate={handleUpdate}
-        editForm={editForm}
-        setEditForm={setEditForm}
-        updateLoading={updateLoading}
+      <UserModal 
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onSave={handleSaveUser}
+        form={userForm}
+        setForm={setUserForm}
+        loading={modalLoading}
+        mode={modalMode}
       />
     </div>
   );

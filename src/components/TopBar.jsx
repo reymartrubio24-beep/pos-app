@@ -13,7 +13,6 @@ const TopBar = ({ activePage, user, onToggleSidebar, theme, onToggleTheme, onLog
   };
 
 
-
   return (
     <header className="top-bar">
       <div style={{ display: 'flex', alignItems: 'center' }}>

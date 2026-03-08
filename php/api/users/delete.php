@@ -12,22 +12,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         sendResponse(['error' => 'User ID is required.'], 400);
     }
 
-    // Prevent owner from deleting themselves
+    // Prevent owner para dili ma delete ang iyang account
     if ($user_id == $_SESSION['user_id']) {
         sendResponse(['error' => 'You cannot delete your own account.'], 403);
     }
 
     try {
+        $pdo->beginTransaction();
+
+        // Check the user to be deleted
+        $stmt = $pdo->prepare("SELECT role, full_name FROM users WHERE id = ?");
+        $stmt->execute([$user_id]);
+        $userToDelete = $stmt->fetch();
+
+        if (!$userToDelete) {
+            throw new Exception("User not found.");
+        }
+
+        //Allow deleting owner only if another owner exists
+        if ($userToDelete['role'] === 'owner') {
+            $countStmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'owner'");
+            $ownerCount = $countStmt->fetchColumn();
+
+            if ($ownerCount <= 1) {
+                throw new Exception("Cannot delete the only owner account in the system. Please create another owner account first.");
+            }
+        }
+
+        // Now safe to delete (related records will automatically have user_id set to NULL)
         $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
         $stmt->execute([$user_id]);
 
-        // Audit Log
+        // Audit Log for the deletion itself
         $auditStmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)");
-        $auditStmt->execute([$_SESSION['user_id'], 'Delete User', 'Deleted user account with ID: ' . $user_id]);
+        $auditStmt->execute([$_SESSION['user_id'], 'Delete User', 'Deleted ' . $userToDelete['role'] . ': ' . $userToDelete['full_name'] . ' (ID: ' . $user_id . ')']);
 
+        $pdo->commit();
         sendResponse(['success' => true, 'message' => 'User deleted successfully.']);
     } catch (Exception $e) {
-        sendResponse(['error' => 'Database error: ' . $e->getMessage()], 500);
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        sendResponse(['error' => 'Deletion failed: ' . $e->getMessage()], 400);
     }
 } else {
     sendResponse(['error' => 'Invalid request method.'], 405);
