@@ -13,7 +13,7 @@
   <h3 align="center">Point of Sale (POS) Application</h3>
 
   <p align="center">
-    A comprehensive full-stack retail management solution built with React and PHP.
+    A full-stack retail management solution built with React and PHP.
     <br />
     <br />
     <a href="https://github.com/reymartrubio24-beep/pos-app">💻 View Code</a>
