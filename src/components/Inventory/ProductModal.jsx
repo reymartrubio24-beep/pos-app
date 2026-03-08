@@ -1,4 +1,5 @@
 import React from 'react';
+import { PRODUCT_CATEGORIES } from '../../utils/constants';
 
 const ProductModal = ({ 
   isOpen, 
@@ -8,7 +9,8 @@ const ProductModal = ({
   setFormData, 
   previewUrl, 
   handleFileChange, 
-  handleSubmit 
+  handleSubmit,
+  categories = PRODUCT_CATEGORIES
 }) => {
   if (!isOpen) return null;
 
@@ -71,11 +73,19 @@ const ProductModal = ({
           <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '16px', marginBottom: '20px' }}>
             <div>
                <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--slate-700)', display: 'block', marginBottom: '8px' }}>Category</label>
-               <select className="input-field" style={{ appearance: 'auto' }} value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
-                 {['Beverages', 'Snacks', 'Dairy', 'Canned Goods', 'Bread & Bakery', 'Condiments', 'Personal Care', 'Household'].map(c => (
-                    <option key={c} value={c}>{c}</option>
-                 ))}
-               </select>
+               <input 
+                  list="category-suggestions"
+                  className="input-field" 
+                  placeholder="Select or type category"
+                  value={formData.category} 
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  required
+               />
+               <datalist id="category-suggestions">
+                  {categories.map(c => (
+                     <option key={c} value={c} />
+                  ))}
+               </datalist>
             </div>
             <div>
                <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--slate-700)', display: 'block', marginBottom: '8px' }}>Price (₱)</label>

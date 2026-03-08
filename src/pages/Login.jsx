@@ -230,7 +230,7 @@ const Login = ({ onLogin }) => {
         </form>
       </div>
       
-      <p style={{ marginTop: '32px', fontSize: '12px', color: 'var(--text-sub)' }}>RetailPOS v1.0 • Small Retail Store Management System</p>
+      <p style={{ marginTop: '32px', fontSize: '12px', color: 'var(--text-sub)' }}>RetailPOS Ika 3v • Small Retail Store Management System</p>
     </div>
   );
 };

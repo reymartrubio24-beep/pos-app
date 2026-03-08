@@ -5,13 +5,14 @@ import ProductFilters from '../components/POS/ProductFilters';
 import Cart from '../components/POS/Cart';
 import PaymentModal from '../components/POS/PaymentModal';
 import SuccessModal from '../components/POS/SuccessModal';
+import { PRODUCT_CATEGORIES } from '../utils/constants';
 
 const POSTerminal = ({ user }) => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [category, setCategory] = useState('All');
   const [search, setSearch] = useState('');
-  const [categories] = useState(['All', 'Beverages', 'Snacks', 'Dairy', 'Canned Goods', 'Bread & Bakery', 'Condiments', 'Personal Care', 'Household']);
+  const [categories, setCategories] = useState(['All', ...PRODUCT_CATEGORIES]);
   const [loading, setLoading] = useState(true);
   
   // Modal States
@@ -21,6 +22,19 @@ const POSTerminal = ({ user }) => {
   const [amountReceived, setAmountReceived] = useState('');
   const [transactionResult, setTransactionResult] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const dbCategories = await api.get('/api/products/categories.php');
+        const combined = Array.from(new Set(['All', ...PRODUCT_CATEGORIES, ...dbCategories]));
+        setCategories(combined);
+      } catch (err) {
+        console.error('Failed to fetch categories', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {

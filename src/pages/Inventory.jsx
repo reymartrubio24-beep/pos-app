@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
+import { PRODUCT_CATEGORIES } from '../utils/constants';
 import ProductTable from '../components/Inventory/ProductTable';
 import ProductModal from '../components/Inventory/ProductModal';
 
@@ -9,13 +10,26 @@ const Inventory = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [search, setSearch] = useState('');
-  const [formData, setFormData] = useState({ name: '', category: 'Snacks', price: '', stock: '', low_stock_threshold: '10' });
+  const [formData, setFormData] = useState({ name: '', category: '', price: '', stock: '', low_stock_threshold: '10' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
 
+  const [categories, setCategories] = useState(PRODUCT_CATEGORIES);
+  
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const dbCategories = await api.get('/api/products/categories.php');
+      const combined = Array.from(new Set([...PRODUCT_CATEGORIES, ...dbCategories]));
+      setCategories(combined);
+    } catch (err) {
+      console.error('Failed to categories', err);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -42,7 +56,7 @@ const Inventory = ({ user }) => {
       setPreviewUrl(product.image_url || '');
     } else {
       setEditingProduct(null);
-      setFormData({ name: '', category: 'Snacks', price: '', stock: '', low_stock_threshold: '10' });
+      setFormData({ name: '', category: '', price: '', stock: '', low_stock_threshold: '10' });
       setPreviewUrl('');
     }
     setSelectedFile(null);
@@ -153,6 +167,7 @@ const Inventory = ({ user }) => {
         formData={formData}
         setFormData={setFormData}
         previewUrl={previewUrl}
+        categories={categories}
         handleFileChange={handleFileChange}
         handleSubmit={handleSubmit}
       />
