@@ -18,7 +18,7 @@ const Footer = () => {
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
           <div style={{ width: '6px', height: '6px', background: 'var(--success)', borderRadius: '50%' }}></div>
-          <span style={{ fontSize: '12px', fontWeight: '500' }}>Online ang System</span>
+          <span style={{ fontSize: '12px', fontWeight: '500' }}>Kapoya buhat Systema</span>
         </div>
         <span>© {new Date().getFullYear()} All rights reserved.</span>
       </div>

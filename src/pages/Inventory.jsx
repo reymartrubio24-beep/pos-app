@@ -3,7 +3,7 @@ import { api } from '../utils/api';
 import ProductTable from '../components/Inventory/ProductTable';
 import ProductModal from '../components/Inventory/ProductModal';
 
-const Inventory = () => {
+const Inventory = ({ user }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -110,12 +110,14 @@ const Inventory = () => {
           <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>Inventory Management</h1>
           <p style={{ color: 'var(--slate-500)', fontSize: '14px' }}>Maintain your stock and product records</p>
         </div>
-        <button className="premium-btn" onClick={() => handleOpenModal()}>
-          <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
-          </svg>
-          Add Product
-        </button>
+        {user?.role === 'owner' && (
+          <button className="premium-btn" onClick={() => handleOpenModal()}>
+            <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Product
+          </button>
+        )}
       </div>
 
       <div className="premium-card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -140,6 +142,7 @@ const Inventory = () => {
           loading={loading} 
           onEdit={handleOpenModal} 
           onDelete={handleDelete} 
+          user={user}
         />
       </div>
 

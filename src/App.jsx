@@ -15,7 +15,7 @@ import './index.css';
 
 const App = () => {
   const [user, setUser] = useState(null);
-  const [activePage, setActivePage] = useState('dashboard');
+  const [activePage, setActivePage] = useState(localStorage.getItem('activePage') || 'dashboard');
   const [loading, setLoading] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -40,6 +40,12 @@ const App = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [theme]);
 
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('activePage', activePage);
+    }
+  }, [activePage, user]);
+
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
@@ -49,9 +55,9 @@ const App = () => {
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem('pos_user', JSON.stringify(userData));
-    setActivePage('dashboard');
+    // inig login nimo sa cashier didto ka diretso sa pos terminal
+    setActivePage(userData.role === 'owner' ? 'dashboard' : 'pos');
   };
-
 
 
   const handleLogout = async () => {
@@ -59,10 +65,12 @@ const App = () => {
       await api.get('/api/auth/logout.php');
       setUser(null);
       localStorage.removeItem('pos_user');
+      localStorage.removeItem('activePage');
     } catch(err) {
       console.error(err);
       setUser(null);
       localStorage.removeItem('pos_user');
+      localStorage.removeItem('activePage');
     }
   };
 
@@ -91,7 +99,7 @@ const App = () => {
     switch(activePage) {
       case 'dashboard': return <Dashboard user={user} />;
       case 'pos': return <POSTerminal user={user} />;
-      case 'inventory': return user.role === 'owner' ? <Inventory user={user} /> : <Dashboard user={user} />;
+      case 'inventory': return <Inventory user={user} />;
       case 'sales': return user.role === 'owner' ? <SalesReport /> : <Dashboard user={user} />;
       case 'audit': return user.role === 'owner' ? <AuditLog /> : <Dashboard user={user} />;
       case 'users': return user.role === 'owner' ? <Users /> : <Dashboard user={user} />;

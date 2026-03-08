@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProductTable = ({ products, loading, onEdit, onDelete }) => {
+const ProductTable = ({ products, loading, onEdit, onDelete, user }) => {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
@@ -66,7 +66,9 @@ const ProductTable = ({ products, loading, onEdit, onDelete }) => {
               <td style={{ paddingRight: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                    <button onClick={() => onEdit(p)} style={{ border: 'none', background: 'var(--slate-100)', color: 'var(--slate-600)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Edit</button>
-                   <button onClick={() => onDelete(p.id)} style={{ border: 'none', background: '#fee2e2', color: 'var(--danger)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Delete</button>
+                   {user?.role === 'owner' && (
+                     <button onClick={() => onDelete(p.id)} style={{ border: 'none', background: '#fee2e2', color: 'var(--danger)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Delete</button>
+                   )}
                 </div>
               </td>
             </tr>

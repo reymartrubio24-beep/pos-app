@@ -2,7 +2,7 @@
 require_once '../../config/db.php';
 require_once '../utils/common.php';
 
-checkAuth('owner');
+checkAuth();
 
 $action = $_GET['action'] ?? '';
 $data = getJsonInput();
@@ -95,6 +95,9 @@ try {
     }
 
     if ($action === 'delete') {
+        if ($_SESSION['role'] !== 'owner') {
+            throw new Exception('Unauthorized: Only an owner can delete products.');
+        }
         $id = $_GET['id'] ?? null;
         if (!$id) {
             throw new Exception('Product ID is required for deletion');
