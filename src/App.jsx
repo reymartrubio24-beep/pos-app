@@ -52,10 +52,7 @@ const App = () => {
     setActivePage('dashboard');
   };
 
-  const handleUpdateUser = (updatedUser) => {
-    setUser(updatedUser);
-    localStorage.setItem('pos_user', JSON.stringify(updatedUser));
-  };
+
 
   const handleLogout = async () => {
     try {
@@ -123,7 +120,6 @@ const App = () => {
            theme={theme}
            onToggleTheme={toggleTheme}
            onLogout={handleLogout}
-           onUpdateUser={handleUpdateUser}
          />
          <main className="page-container">
             {renderPage()}

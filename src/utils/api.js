@@ -35,7 +35,6 @@ export const request = async (url, options = {}) => {
 export const api = {
   get: (url) => request(url, { method: 'GET' }),
   post: (url, body) => request(url, { method: 'POST', body: JSON.stringify(body) }),
-  put: (url, body) => request(url, { method: 'PUT', body: JSON.stringify(body) }),
   delete: (url) => request(url, { method: 'DELETE' }),
   
   // Special method for uploads (no JSON content-type header)

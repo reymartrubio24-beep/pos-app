@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const TopBar = ({ activePage, user, onToggleSidebar, theme, onToggleTheme, onLogout, onUpdateUser }) => {
+const TopBar = ({ activePage, user, onToggleSidebar, theme, onToggleTheme, onLogout }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const pageTitles = {
