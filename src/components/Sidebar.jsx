@@ -43,7 +43,7 @@ const Sidebar = ({ user, activePage, onNavigate, onLogout, isCollapsed, isMobile
       </div>
 
       {/* Navigation */}
-      <nav style={{ flex: 1, paddingTop: '24px' }}>
+      <nav style={{ flex: 1, paddingTop: '20px' }}>
         {menuItems.map(item => (
           <a
             key={item.id}
