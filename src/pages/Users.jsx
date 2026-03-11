@@ -55,7 +55,7 @@ const Users = () => {
       username: user.username,
       full_name: user.full_name,
       role: user.role,
-      password: '' // Leave blank unless changing
+      password: '' // leave ra nimo blank para dili mausab kung dili nimo i-fill up
     });
     setShowModal(true);
   };

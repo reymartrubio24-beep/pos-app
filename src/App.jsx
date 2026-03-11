@@ -122,12 +122,12 @@ const App = () => {
       />
       <div className="main-content-layout">
          <TopBar 
-           activePage={activePage} 
-           user={user} 
-           onToggleSidebar={toggleSidebar}
-           theme={theme}
-           onToggleTheme={toggleTheme}
-           onLogout={handleLogout}
+            activePage={activePage} 
+            user={user} 
+            onToggleSidebar={toggleSidebar}
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            onLogout={handleLogout}
          />
          <main className="page-container">
             {renderPage()}

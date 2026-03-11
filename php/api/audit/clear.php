@@ -7,7 +7,7 @@ checkAuth('owner');
 try {
     $pdo->exec("DELETE FROM audit_logs");
 
-    // Add a log for the action itself
+    // Add kag log entry nga nag-clear sa audit logs
     $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)");
     $stmt->execute([$_SESSION['user_id'], 'System', 'Cleared all audit logs']);
 

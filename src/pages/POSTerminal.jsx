@@ -126,7 +126,7 @@ const POSTerminal = ({ user }) => {
         setCart([]);
         setShowPaymentModal(false);
         setShowSuccessModal(true);
-        // Refresh products to show updated stock
+        // Refresh nimo ang products para ma-update ang stock after transaction
         const freshProducts = await api.get(`/api/products/index.php?category=${category}&search=${search}`);
         setProducts(freshProducts);
       }

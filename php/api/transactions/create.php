@@ -19,7 +19,7 @@ if (empty($items)) {
 try {
     $pdo->beginTransaction();
 
-    // Insert transaction
+    // Insert  nimo ang transaction record
     $stmt = $pdo->prepare("INSERT INTO transactions (user_id, total, vat, subtotal) VALUES (?, ?, ?, ?)");
     $stmt->execute([$user_id, $total, $vat, $subtotal]);
     $transactionId = $pdo->lastInsertId();

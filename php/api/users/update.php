@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Fetch current user details to check if they exist
+        // Fetch ang current username sa user para ma-check nimo kung nag change ba siya og username, if yes, then i-check nimo if ang new username kay existing na ba sa system
         $stmt = $pdo->prepare("SELECT username FROM users WHERE id = ?");
         $stmt->execute([$user_id]);
         $user = $stmt->fetch();
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             sendResponse(['error' => 'User not found.'], 404);
         }
 
-        // Check if new username already exists (if it's being changed)
+        // Check if ang username kay gi-change ba, if yes, then i-check nimo if ang new username kay existing na ba sa system (excluding sa current user)
         if ($new_username && $new_username !== $user['username']) {
             $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
             $stmt->execute([$new_username, $user_id]);

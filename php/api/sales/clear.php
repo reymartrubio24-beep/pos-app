@@ -7,13 +7,13 @@ checkAuth('owner');
 try {
     $pdo->beginTransaction();
 
-    // 1. Delete all items first (integrity)
+    // 1. Delete tanang transaction items
     $pdo->exec("DELETE FROM transaction_items");
 
-    // 2. Delete all transactions
+    // 2. Delete tanang transactions
     $pdo->exec("DELETE FROM transactions");
 
-    // 3. Add a log for the action
+    // 3. Add a log kag entry nga nag-clear sa sales records (transactions)
     $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)");
     $stmt->execute([$_SESSION['user_id'], 'System', 'Cleared all sales records (Transactions)']);
 

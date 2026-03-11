@@ -17,7 +17,7 @@ const Login = ({ onLogin }) => {
 
     const endpoint = isRegistering ? '/api/auth/register.php' : '/api/auth/login.php';
     const payload = isRegistering 
-      ? { username, password, full_name: fullName, role: 'cashier' } // Hardcode to cashier
+      ? { username, password, full_name: fullName, role: 'cashier' } // Hardcode ra nimo ang role to cashier kay owner ra ang maka-register sa system, so kung mag-create siya og account kay cashier na dayon
       : { username, password };
 
     try {
