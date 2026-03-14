@@ -42,7 +42,7 @@ const DashboardCards = ({ stats }) => {
       trendUp: true
     },
     { 
-      title: "Avg. Order", 
+      title: "Avg. Sales", 
       value: `₱${(parseFloat(stats?.today?.revenue || 0) / (parseInt(stats?.today?.count) || 1)).toFixed(2)}`, 
       count: "Today's average", 
       icon: (

@@ -26,7 +26,7 @@ const StatsCards = ({ totalSales, totalOrders }) => {
       <div className="premium-card" style={{ borderLeft: '4px solid var(--success)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
            <div>
-              <p style={{ color: 'var(--slate-500)', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Total Orders</p>
+              <p style={{ color: 'var(--slate-500)', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Total Sales</p>
               <h2 style={{ fontSize: '30px', fontWeight: '800', color: 'var(--slate-900)' }}>{totalOrders}</h2>
            </div>
            <div style={{ color: 'var(--success)', background: 'var(--success-light)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -44,7 +44,7 @@ const StatsCards = ({ totalSales, totalOrders }) => {
       <div className="premium-card" style={{ borderLeft: '4px solid var(--warning)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
            <div>
-              <p style={{ color: 'var(--slate-500)', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Average Ticket</p>
+              <p style={{ color: 'var(--slate-500)', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Average Sales</p>
               <h2 style={{ fontSize: '30px', fontWeight: '800', color: 'var(--slate-900)' }}>₱{avgTicket.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h2>
            </div>
            <div style={{ color: 'var(--warning)', background: 'var(--warning-light)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
