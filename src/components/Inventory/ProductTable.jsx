@@ -66,7 +66,7 @@ const ProductTable = ({ products, loading, onEdit, onDelete, user }) => {
               <td style={{ paddingRight: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                    <button onClick={() => onEdit(p)} style={{ border: 'none', background: 'var(--slate-100)', color: 'var(--slate-600)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Edit</button>
-                   {user?.role === 'owner' && (
+                   {(user?.role === 'owner' || user?.role === 'admin') && (
                      <button onClick={() => onDelete(p.id)} style={{ border: 'none', background: '#fee2e2', color: 'var(--danger)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Delete</button>
                    )}
                 </div>

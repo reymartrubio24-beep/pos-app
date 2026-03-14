@@ -2,7 +2,7 @@
 require_once '../../config/db.php';
 require_once '../utils/common.php';
 
-checkAuth('owner');
+checkAuth(['owner', 'admin']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = getJsonInput();
@@ -21,12 +21,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->beginTransaction();
 
         // Check the user to be deleted
-        $stmt = $pdo->prepare("SELECT role, full_name FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT role, full_name, username FROM users WHERE id = ?");
         $stmt->execute([$user_id]);
         $userToDelete = $stmt->fetch();
 
         if (!$userToDelete) {
             throw new Exception("User not found.");
+        }
+
+        // Prevent admin para dili ma delete ang system admin account
+        if ($userToDelete['username'] === 'admin') {
+            throw new Exception("The system administrator account ('admin') cannot be deleted.");
         }
 
         //Allow deleting owner only if another owner exists

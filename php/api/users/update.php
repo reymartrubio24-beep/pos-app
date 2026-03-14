@@ -2,7 +2,7 @@
 require_once '../../config/db.php';
 require_once '../utils/common.php';
 
-checkAuth('owner');
+checkAuth(['owner', 'admin']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = getJsonInput();
@@ -28,6 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check if ang username kay gi-change ba, if yes, then i-check nimo if ang new username kay existing na ba sa system (excluding sa current user)
         if ($new_username && $new_username !== $user['username']) {
+            // Prevent renaming the admin account
+            if ($user['username'] === 'admin') {
+                sendResponse(['error' => 'The system administrator username ("admin") cannot be changed.'], 403);
+            }
+
             $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
             $stmt->execute([$new_username, $user_id]);
             if ($stmt->fetch()) {

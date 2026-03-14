@@ -2,7 +2,7 @@
 require_once '../../config/db.php';
 require_once '../utils/common.php';
 
-checkAuth('owner');
+checkAuth(['owner', 'admin']);
 
 try {
     $pdo->beginTransaction();

@@ -51,6 +51,7 @@ const UserModal = ({
               onChange={(e) => setForm({...form, role: e.target.value})}
               required
             >
+              <option value="admin">Admin</option>
               <option value="cashier">Cashier</option>
               <option value="owner">Owner</option>
             </select>

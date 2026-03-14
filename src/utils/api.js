@@ -1,6 +1,6 @@
 /**
  * Centralized API service for consistent fetching and error handling
- */
+ **/
 
 const API_BASE = '/api';
 

@@ -2,7 +2,7 @@
 require_once '../../config/db.php';
 require_once '../utils/common.php';
 
-checkAuth('owner');
+checkAuth(['owner', 'admin']);
 
 $start_date = $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'));
 $end_date = $_GET['end_date'] ?? date('Y-m-d');

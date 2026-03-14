@@ -56,7 +56,7 @@ const App = () => {
     setUser(userData);
     localStorage.setItem('pos_user', JSON.stringify(userData));
     // inig login nimo sa cashier didto ka diretso sa pos terminal
-    setActivePage(userData.role === 'owner' ? 'dashboard' : 'pos');
+    setActivePage(userData.role === 'owner' || userData.role === 'admin' ? 'dashboard' : 'pos');
   };
 
 
@@ -100,9 +100,9 @@ const App = () => {
       case 'dashboard': return <Dashboard user={user} />;
       case 'pos': return <POSTerminal user={user} />;
       case 'inventory': return <Inventory user={user} />;
-      case 'sales': return user.role === 'owner' ? <SalesReport /> : <Dashboard user={user} />;
-      case 'audit': return user.role === 'owner' ? <AuditLog /> : <Dashboard user={user} />;
-      case 'users': return user.role === 'owner' ? <Users /> : <Dashboard user={user} />;
+      case 'sales': return (user.role === 'owner' || user.role === 'admin') ? <SalesReport /> : <Dashboard user={user} />;
+      case 'audit': return (user.role === 'owner' || user.role === 'admin') ? <AuditLog /> : <Dashboard user={user} />;
+      case 'users': return (user.role === 'owner' || user.role === 'admin') ? <Users /> : <Dashboard user={user} />;
       default: return <Dashboard user={user} />;
     }
   };

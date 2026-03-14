@@ -24,8 +24,21 @@ function checkAuth($role = null)
         sendResponse(['error' => 'Unauthorized'], 401);
     }
 
-    if ($role && $_SESSION['role'] !== $role) {
-        sendResponse(['error' => 'Forbidden: Access denied for ' . $_SESSION['role']], 403);
+    if ($role) {
+        $allowedRoles = is_array($role) ? $role : [$role];
+        $currentRole = strtolower(trim((string)($_SESSION['role'] ?? '')));
+        
+        $match = false;
+        foreach ($allowedRoles as $r) {
+            if (strtolower(trim((string)$r)) === $currentRole) {
+                $match = true;
+                break;
+            }
+        }
+        
+        if (!$match) {
+            sendResponse(['error' => 'Forbidden'], 403);
+        }
     }
 }
 

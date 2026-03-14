@@ -95,8 +95,8 @@ try {
     }
 
     if ($action === 'delete') {
-        if ($_SESSION['role'] !== 'owner') {
-            throw new Exception('Unauthorized: Only an owner can delete products.');
+        if ($_SESSION['role'] !== 'owner' && $_SESSION['role'] !== 'admin') {
+            throw new Exception('Unauthorized: Only an owner or admin can delete products.');
         }
         $id = $_GET['id'] ?? null;
         if (!$id) {

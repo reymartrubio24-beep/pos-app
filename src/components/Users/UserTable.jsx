@@ -34,8 +34,12 @@ const UserTable = ({ users, loading, onEdit, onDelete }) => {
                   width: '36px', 
                   height: '36px', 
                   borderRadius: '10px', 
-                  background: user.role === 'owner' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(100, 116, 139, 0.1)',
-                  color: user.role === 'owner' ? 'var(--success)' : 'var(--text-sub)',
+                  background: user.role === 'owner' ? 'rgba(16, 185, 129, 0.1)' : 
+                             user.role === 'admin' ? 'rgba(59, 130, 246, 0.1)' : 
+                             'rgba(148, 163, 184, 0.1)',
+                  color: user.role === 'owner' ? 'var(--success)' : 
+                         user.role === 'admin' ? '#3b82f6' : 
+                         'var(--text-sub)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -58,9 +62,15 @@ const UserTable = ({ users, loading, onEdit, onDelete }) => {
                 fontSize: '11px', 
                 fontWeight: '700',
                 textTransform: 'uppercase',
-                background: user.role === 'owner' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(148, 163, 184, 0.1)',
-                color: user.role === 'owner' ? 'var(--success)' : 'var(--text-sub)',
-                border: `1px solid ${user.role === 'owner' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(148, 163, 184, 0.2)'}`
+                background: user.role === 'owner' ? 'rgba(16, 185, 129, 0.1)' : 
+                           user.role === 'admin' ? 'rgba(59, 130, 246, 0.1)' : 
+                           'rgba(148, 163, 184, 0.1)',
+                color: user.role === 'owner' ? 'var(--success)' : 
+                       user.role === 'admin' ? '#3b82f6' : 
+                       'var(--text-sub)',
+                border: `1px solid ${user.role === 'owner' ? 'rgba(16, 185, 129, 0.2)' : 
+                                     user.role === 'admin' ? 'rgba(59, 130, 246, 0.2)' : 
+                                     'rgba(148, 163, 184, 0.2)'}`
               }}>
                 {user.role}
               </span>
@@ -94,25 +104,27 @@ const UserTable = ({ users, loading, onEdit, onDelete }) => {
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                    </svg>
                  </button>
-                 <button 
-                   onClick={() => onDelete(user)}
-                   className="delete-btn-subtle"
-                   style={{ 
-                     background: 'rgba(239, 68, 68, 0.05)', 
-                     border: 'none', 
-                     color: 'var(--danger)', 
-                     padding: '8px', 
-                     borderRadius: '8px',
-                     cursor: 'pointer',
-                     opacity: 0.7,
-                     transition: 'all 0.2s'
-                   }}
-                   title="Delete User"
-                 >
-                   <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                   </svg>
-                 </button>
+                  {user.username !== 'admin' && (
+                    <button 
+                      onClick={() => onDelete(user)}
+                      className="delete-btn-subtle"
+                      style={{ 
+                        background: 'rgba(239, 68, 68, 0.05)', 
+                        border: 'none', 
+                        color: 'var(--danger)', 
+                        padding: '8px', 
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        opacity: 0.7,
+                        transition: 'all 0.2s'
+                      }}
+                      title="Delete User"
+                    >
+                      <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  )}
                </div>
             </td>
           </tr>
