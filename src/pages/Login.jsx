@@ -223,7 +223,7 @@ const Login = ({ onLogin }) => {
                   setError('');
                 }}
               >
-                {isRegistering ? 'Sign In' : 'Create an Account'}
+                {isRegistering ? 'Sign In' : 'Create a Cashier Account'}
               </button>
             </p>
           </div>
