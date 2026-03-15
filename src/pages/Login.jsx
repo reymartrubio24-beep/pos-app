@@ -61,7 +61,7 @@ const Login = ({ onLogin }) => {
       {/* Brand Name */}
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '4px' }}>RetailPOS</h1>
-        <p style={{ fontSize: '14px', color: 'var(--text-sub)' }}>Point of Sale & Sales Monitoring System</p>
+        <p style={{ fontSize: '14px', color: 'var(--text-sub)' }}>Point of Sale & Sales Monitoring System for a Small Retail Store</p>
       </div>
 
       <div className="premium-card" style={{ 

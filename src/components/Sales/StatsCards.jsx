@@ -55,7 +55,7 @@ const StatsCards = ({ totalSales, totalOrders }) => {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
            <span className="badge badge-warning" style={{ fontSize: '10px' }}>Stable</span>
-           <span style={{ fontSize: '12px', color: 'var(--slate-400)' }}>Typical spending habit</span>
+           <span style={{ fontSize: '12px', color: 'var(--slate-400)' }}>Typical Sales </span>
         </div>
       </div>
     </div>
