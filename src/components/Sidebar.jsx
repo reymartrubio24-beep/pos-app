@@ -53,7 +53,7 @@ const Sidebar = ({ user, activePage, onNavigate, onLogout, isCollapsed, isMobile
             style={{ 
                marginBottom: '8px', 
                justifyContent: isCollapsed ? 'center' : 'flex-start',
-               padding: isCollapsed ? '12px 0' : '12px 16px',
+               padding: isCollapsed ? '1~2px 0' : '12px 16px',
                margin: isCollapsed ? '2px 12px' : '2px 16px'
             }}
             title={isCollapsed ? item.label : ''}

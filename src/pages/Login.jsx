@@ -134,7 +134,7 @@ const Login = ({ onLogin }) => {
           )}
 
           <div style={{ marginBottom: '20px' }}>
-             <label className="input-label" style={{ color: 'var(--text-sub)' }}>Username / Email</label>
+            <label className="input-label" style={{ color: 'var(--text-sub)' }}>Username / Email</label>
             <input 
               type="text" 
               className="input-field" 
