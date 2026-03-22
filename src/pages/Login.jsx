@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 
 const Login = ({ onLogin }) => {
-  const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState('cashier');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -15,34 +12,22 @@ const Login = ({ onLogin }) => {
     setLoading(true);
     setError('');
 
-    const endpoint = isRegistering ? '/api/auth/register.php' : '/api/auth/login.php';
-    const payload = isRegistering 
-      ? { username, password, full_name: fullName, role: 'cashier' } // Hardcode ra nimo ang role to cashier kay owner ra ang maka-register sa system, so kung mag-create siya og account kay cashier na dayon
-      : { username, password };
-
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch('/api/auth/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
 
       if (data.success) {
-        if (isRegistering) {
-          setIsRegistering(false);
-          setError('Registration successful! Please login.');
-          // Reset form
-          setPassword('');
-        } else {
-          onLogin(data.user);
-        }
+        onLogin(data.user);
       } else {
-        setError(data.error || 'Operation failed');
+        setError(data.error || 'Invalid credentials');
       }
     } catch (err) {
       console.error(err);
-      setError('Connection failed. Make sure PHP server is running. Error: ' + err.message);
+      setError('Connection failed. Make sure PHP server is running.');
     } finally {
       setLoading(false);
     }
@@ -72,36 +57,14 @@ const Login = ({ onLogin }) => {
         border: '1px solid var(--border-main)',
         background: 'var(--card-bg)'
       }}>
-        <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-main)', marginBottom: isRegistering ? '12px' : '32px' }}>
-          {isRegistering ? 'Create new account' : 'Sign in to your account'}
+        <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '32px' }}>
+          Sign in to your account
         </h2>
-
-        {isRegistering && (
-          <div style={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            gap: '6px',
-            padding: '6px 12px',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            color: 'var(--success)',
-            borderRadius: '20px',
-            fontSize: '11px',
-            fontWeight: '700',
-            textTransform: 'uppercase',
-            marginBottom: '24px',
-            border: '1px solid rgba(16, 185, 129, 0.2)'
-          }}>
-            <svg style={{ width: '12px', height: '12px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            Cashier Access Only
-          </div>
-        )}
 
         {error && (
           <div style={{ 
-            background: error.includes('successful') || error.includes('Recovery') ? 'var(--success-light)' : 'var(--danger-light)', 
-            color: error.includes('successful') || error.includes('Recovery') ? 'var(--success)' : 'var(--danger)', 
+            background: error.includes('Recovery') ? 'var(--success-light)' : 'var(--danger-light)', 
+            color: error.includes('Recovery') ? 'var(--success)' : 'var(--danger)', 
             padding: '12px', 
             borderRadius: '8px', 
             marginBottom: '24px', 
@@ -109,7 +72,7 @@ const Login = ({ onLogin }) => {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            border: `1px solid ${error.includes('successful') || error.includes('Recovery') ? 'var(--success)' : 'var(--danger)'}20`
+            border: `1px solid ${error.includes('Recovery') ? 'var(--success)' : 'var(--danger)'}20`
           }}>
             <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -119,20 +82,6 @@ const Login = ({ onLogin }) => {
         )}
 
         <form onSubmit={handleSubmit}>
-          {isRegistering && (
-            <div style={{ marginBottom: '20px' }}>
-                <label className="input-label" style={{ color: 'var(--text-sub)' }}>Full Name</label>
-              <input 
-                type="text" 
-                className="input-field" 
-                placeholder="John Doe" 
-                value={fullName} 
-                onChange={(e) => setFullName(e.target.value)}
-                required
-              />
-            </div>
-          )}
-
           <div style={{ marginBottom: '20px' }}>
             <label className="input-label" style={{ color: 'var(--text-sub)' }}>Username / Email</label>
             <input 
@@ -181,52 +130,26 @@ const Login = ({ onLogin }) => {
             </div>
           </div>
 
-          {!isRegistering && (
-            <div style={{ textAlign: 'right', marginBottom: '24px' }}>
-              <button 
-                type="button"
-                onClick={() => setError('Owner Recovery: Please contact your system provider or check your registration recovery key.')}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  color: 'var(--text-sub)', 
-                  fontSize: '12px', 
-                  cursor: 'pointer',
-                  textDecoration: 'underline'
-                }}
-              >
-                Forgot your password?
-              </button>
-            </div>
-          )}
-
-          <button type="submit" className="premium-btn" style={{ width: '100%', height: '44px', fontSize: '14px', fontWeight: '600', background: 'var(--success)', marginTop: isRegistering ? '12px' : '0' }} disabled={loading}>
-            {loading ? <div className="animate-spin" style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%' }}></div> : (isRegistering ? 'Create Account' : 'Sign In')}
-          </button>
-          
-          <div style={{ marginTop: '24px', textAlign: 'center' }}>
-            <p style={{ fontSize: '13px', color: 'var(--text-sub)' }}>
-              {isRegistering ? 'Already have an account?' : "Don't have an account?"} {' '}
-              <button 
-                type="button" 
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  color: 'var(--success)', 
-                  fontWeight: '700', 
-                  cursor: 'pointer',
-                  padding: 0,
-                  fontSize: '13px'
-                }}
-                onClick={() => {
-                  setIsRegistering(!isRegistering);
-                  setError('');
-                }}
-              >
-                {isRegistering ? 'Sign In' : 'Create a Cashier Account'}
-              </button>
-            </p>
+          <div style={{ textAlign: 'right', marginBottom: '24px' }}>
+            <button 
+              type="button"
+              onClick={() => setError('Owner Recovery: Please contact your system provider.')}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: 'var(--text-sub)', 
+                fontSize: '12px', 
+                cursor: 'pointer',
+                textDecoration: 'underline'
+              }}
+            >
+              Forgot your password?
+            </button>
           </div>
+
+          <button type="submit" className="premium-btn" style={{ width: '100%', height: '44px', fontSize: '14px', fontWeight: '600', background: 'var(--success)' }} disabled={loading}>
+            {loading ? <div className="animate-spin" style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%' }}></div> : 'Sign In'}
+          </button>
         </form>
       </div>
       
@@ -236,3 +159,4 @@ const Login = ({ onLogin }) => {
 };
 
 export default Login;
+

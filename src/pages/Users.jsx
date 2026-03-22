@@ -112,7 +112,7 @@ const Users = () => {
   );
 
   return (
-    <div className="page-container" style={{ animation: 'fadeIn 0.5s ease' }}>
+    <div style={{ animation: 'fadeIn 0.5s ease', flex: 1, display: 'flex', flexDirection: 'column' }}>
       <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '4px' }}>System Users</h1>
