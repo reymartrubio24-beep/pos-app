@@ -137,7 +137,7 @@ npm install
    Copy or symlink the entire `pos-app` folder into your XAMPP `htdocs` directory so that the PHP API is accessible at:
 
    ```
-http://localhost/GUI-1/pos-app/php/api/
+   http://localhost/GUI-1/pos-app/php/api/
    ```
 
    > The Vite dev server proxies `/api` requests to this path automatically via `vite.config.js`.
