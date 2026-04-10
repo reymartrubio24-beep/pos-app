@@ -30,6 +30,7 @@ const TransactionTable = ({ transactions, loading }) => {
             <th style={{ paddingLeft: '24px' }}>Invoice No.</th>
             <th>Date & Time</th>
             <th>Staff Name</th>
+            <th>Products Sold</th>
             <th>Subtotal</th>
             <th>Tax (12%)</th>
             <th style={{ textAlign: 'right', paddingRight: '24px' }}>Grand Total</th>
@@ -46,6 +47,17 @@ const TransactionTable = ({ transactions, loading }) => {
                 <div style={{ fontSize: '11px', opacity: 0.7 }}>{new Date(t.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</div>
               </td>
               <td style={{ fontWeight: '600', color: 'var(--text-main)' }}>{t.cashier_name}</td>
+              <td style={{ color: 'var(--text-sub)', fontSize: '12px', maxWidth: '220px' }}>
+                <div style={{ 
+                  display: '-webkit-box', 
+                  WebkitLineClamp: 2, 
+                  WebkitBoxOrient: 'vertical', 
+                  overflow: 'hidden',
+                  lineHeight: '1.4'
+                }}>
+                  {t.product_names || <span style={{ color: 'var(--slate-400)', fontStyle: 'italic' }}>N/A</span>}
+                </div>
+              </td>
               <td style={{ color: 'var(--text-sub)' }}>₱{parseFloat(t.subtotal).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
               <td style={{ color: 'var(--text-sub)' }}>₱{parseFloat(t.vat).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
               <td style={{ textAlign: 'right', paddingRight: '24px' }}>

@@ -3,6 +3,7 @@ import { api } from '../utils/api';
 import { PRODUCT_CATEGORIES } from '../utils/constants';
 import ProductTable from '../components/Inventory/ProductTable';
 import ProductModal from '../components/Inventory/ProductModal';
+import ConfirmModal from '../components/Common/ConfirmModal';
 
 const Inventory = ({ user }) => {
   const [products, setProducts] = useState([]);
@@ -13,6 +14,10 @@ const Inventory = ({ user }) => {
   const [formData, setFormData] = useState({ name: '', category: '', price: '', stock: '', low_stock_threshold: '10' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
+  
+  // Confirmation state
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   const [categories, setCategories] = useState(PRODUCT_CATEGORIES);
   
@@ -97,12 +102,20 @@ const Inventory = ({ user }) => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
+   const handleDelete = (id) => {
+    const product = products.find(p => p.id === id);
+    setProductToDelete(product);
+    setShowConfirm(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!productToDelete) return;
+    
     try {
-      const result = await api.get(`/api/products/manage.php?action=delete&id=${id}`);
+      const result = await api.get(`/api/products/manage.php?action=delete&id=${productToDelete.id}`);
       if (result.success) {
+        setShowConfirm(false);
+        setProductToDelete(null);
         fetchProducts();
       } else {
         alert('Delete failed');
@@ -170,6 +183,15 @@ const Inventory = ({ user }) => {
         categories={categories}
         handleFileChange={handleFileChange}
         handleSubmit={handleSubmit}
+      />
+
+      <ConfirmModal 
+        show={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={handleConfirmDelete}
+        title={`Delete ${productToDelete?.name}?`}
+        message="This product will be permanently removed from the inventory. This action cannot be undone."
       />
     </div>
   );

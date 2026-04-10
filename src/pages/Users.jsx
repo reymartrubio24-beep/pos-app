@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import UserTable from '../components/Users/UserTable';
 import UserModal from '../components/Users/UserModal';
+import ConfirmModal from '../components/Common/ConfirmModal';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -19,6 +20,10 @@ const Users = () => {
     password: ''
   });
   const [modalLoading, setModalLoading] = useState(false);
+  
+  // Confirmation state
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -91,12 +96,19 @@ const Users = () => {
     }
   };
 
-  const handleDelete = async (user) => {
-    if (!window.confirm(`Are you sure you want to delete ${user.full_name}?`)) return;
+   const handleDelete = (user) => {
+    setUserToDelete(user);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
     
     try {
-      const data = await api.post('/api/users/delete.php', { id: user.id });
+      const data = await api.post('/api/users/delete.php', { id: userToDelete.id });
       if (data.success) {
+        setShowConfirm(false);
+        setUserToDelete(null);
         fetchUsers();
       } else {
         alert(data.error || 'Delete failed');
@@ -171,6 +183,15 @@ const Users = () => {
         setForm={setUserForm}
         loading={modalLoading}
         mode={modalMode}
+      />
+
+      <ConfirmModal 
+        show={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={handleConfirmDelete}
+        title={`Delete ${userToDelete?.full_name}?`}
+        message="This user will be permanently removed from the system. This action cannot be undone."
       />
     </div>
   );

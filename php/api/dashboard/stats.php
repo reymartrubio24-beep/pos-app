@@ -30,7 +30,14 @@ $chartStmt->execute();
 $chartData = $chartStmt->fetchAll();
 
 // Recent Transactions
-$recentStmt = $pdo->prepare("SELECT t.*, u.full_name as cashier_name FROM transactions t JOIN users u ON t.user_id = u.id ORDER BY t.created_at DESC LIMIT 5");
+$recentStmt = $pdo->prepare("
+    SELECT t.*, u.full_name as cashier_name,
+    (SELECT SUM(quantity) FROM transaction_items WHERE transaction_id = t.id) as item_count
+    FROM transactions t 
+    JOIN users u ON t.user_id = u.id 
+    ORDER BY t.created_at DESC 
+    LIMIT 5
+");
 $recentStmt->execute();
 $recentTransactions = $recentStmt->fetchAll();
 

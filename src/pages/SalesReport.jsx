@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import StatsCards from '../components/Sales/StatsCards';
 import TransactionTable from '../components/Sales/TransactionTable';
+import ConfirmModal from '../components/Common/ConfirmModal';
 
 const SalesReport = () => {
   const [transactions, setTransactions] = useState([]);
@@ -10,6 +11,9 @@ const SalesReport = () => {
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], 
     end: new Date().toISOString().split('T')[0] 
   });
+  
+  // Confirmation state
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     fetchSales();
@@ -29,12 +33,15 @@ const SalesReport = () => {
 
   const totalSales = transactions.reduce((sum, t) => sum + parseFloat(t.total), 0);
 
-  const handleClearAll = async () => {
-    if (!window.confirm('Are you absolutely sure you want to delete ALL sales records? This action cannot be undone and will reset your dashboard stats.')) return;
+   const handleClearAll = () => {
+    setShowConfirm(true);
+  };
 
+  const handleConfirmClear = async () => {
     try {
       const data = await api.delete('/api/sales/clear.php');
       if (data.success) {
+        setShowConfirm(false);
         alert('All sales records have been cleared.');
         fetchSales();
       } else {
@@ -97,8 +104,17 @@ const SalesReport = () => {
                Export CSV
             </button>
         </div>
-        <TransactionTable transactions={transactions} loading={loading} />
+         <TransactionTable transactions={transactions} loading={loading} />
       </div>
+
+      <ConfirmModal 
+        show={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={handleConfirmClear}
+        title="Clear All Sales Records?"
+        message="Are you absolutely sure you want to delete ALL sales records? This action cannot be undone and will reset your dashboard stats."
+      />
     </div>
   );
 };

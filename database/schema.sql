@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS products (
     stock INT NOT NULL DEFAULT 0,
     low_stock_threshold INT DEFAULT 5,
     image_url VARCHAR(255),
+    last_restock TIMESTAMP NULL,
+    last_stock_before INT DEFAULT 0,
+    last_stock_added INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -30,6 +33,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     total DECIMAL(10, 2) NOT NULL,
     vat DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(50) DEFAULT 'Cash',
+    amount_received DECIMAL(10, 2) DEFAULT 0.00,
+    product_names TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
@@ -39,6 +45,7 @@ CREATE TABLE IF NOT EXISTS transaction_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     transaction_id INT,
     product_id INT,
+    product_name VARCHAR(255) NOT NULL DEFAULT '',
     quantity INT NOT NULL,
     price_at_time DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (transaction_id) REFERENCES transactions(id),

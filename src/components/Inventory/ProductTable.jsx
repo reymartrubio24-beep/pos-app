@@ -61,11 +61,18 @@ const ProductTable = ({ products, loading, onEdit, onDelete, user }) => {
                    </span>
                    <span style={{ fontSize: '12px', color: 'var(--slate-400)', fontWeight: '500' }}>units</span>
                 </div>
+                 {p.last_restock && (
+                    <div style={{ fontSize: '10px', color: 'var(--slate-400)', marginTop: '4px' }}>
+                       Restocked: <span style={{ color: 'var(--success)', fontWeight: '600' }}>+{p.last_stock_added}</span> (from {p.last_stock_before}) at {new Date(p.last_restock).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
+                    </div>
+                 )}
               </td>
               <td style={{ color: 'var(--slate-500)', fontSize: '12px', fontWeight: '500' }}>{p.low_stock_threshold} min.</td>
               <td style={{ paddingRight: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                   <button onClick={() => onEdit(p)} style={{ border: 'none', background: 'var(--slate-100)', color: 'var(--slate-600)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Edit</button>
+                   {(user?.role === 'owner' || user?.role === 'admin') && (
+                     <button onClick={() => onEdit(p)} style={{ border: 'none', background: 'var(--slate-100)', color: 'var(--slate-600)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Edit</button>
+                   )}
                    {(user?.role === 'owner' || user?.role === 'admin') && (
                      <button onClick={() => onDelete(p.id)} style={{ border: 'none', background: '#fee2e2', color: 'var(--danger)', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}>Delete</button>
                    )}

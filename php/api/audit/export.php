@@ -1,11 +1,8 @@
 <?php
-session_start();
 require_once '../../config/db.php';
+require_once '../utils/common.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
-    http_response_code(403);
-    exit;
-}
+checkAuth(['owner', 'admin']);
 
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment; filename="audit_logs_' . date('Ymd_His') . '.csv"');
