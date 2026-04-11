@@ -8,19 +8,19 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
         <div style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700' }}>₱{parseFloat(item.price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--slate-100)', borderRadius: '10px', padding: '2px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--slate-50)', borderRadius: '10px', padding: '2px' }}>
           <button 
             onClick={() => onUpdateQuantity(item.id, -1, item.stock)} 
-            style={{ width: '28px', height: '28px', border: 'none', background: 'white', borderRadius: '8px', cursor: 'pointer', color: 'var(--slate-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+            style={{ width: '28px', height: '28px', border: 'none', background: 'var(--card-bg)', borderRadius: '8px', cursor: 'pointer', color: 'var(--slate-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)' }}
           >
             <svg style={{ width: '12px', height: '12px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M20 12H4" />
             </svg>
           </button>
-          <span style={{ fontSize: '13px', fontWeight: '700', width: '30px', textAlign: 'center', color: 'var(--slate-800)' }}>{item.quantity}</span>
+          <span style={{ fontSize: '13px', fontWeight: '700', width: '30px', textAlign: 'center', color: 'var(--text-main)' }}>{item.quantity}</span>
           <button 
             onClick={() => onUpdateQuantity(item.id, 1, item.stock)} 
-            style={{ width: '28px', height: '28px', border: 'none', background: 'white', borderRadius: '8px', cursor: 'pointer', color: 'var(--slate-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+            style={{ width: '28px', height: '28px', border: 'none', background: 'var(--card-bg)', borderRadius: '8px', cursor: 'pointer', color: 'var(--slate-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)' }}
           >
             <svg style={{ width: '12px', height: '12px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />

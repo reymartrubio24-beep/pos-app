@@ -36,13 +36,17 @@ const ProductCard = ({ product, onClick }) => {
       </div>
       <div className="product-info-top">
         <div className="product-name-new">{product.name}</div>
-        <div className={`product-category-badge cat-${product.category?.toLowerCase().replace(/\s+/g, '-')}`}>
+        <div className={`product-category-badge cat-${product.category?.toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')}`}>
           {product.category}
         </div>
       </div>
       <div className="product-info-bottom">
         <div className="product-price-new">₱{parseFloat(product.price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-        <div className="product-stock-new">{product.stock} left</div>
+        <div className={`product-stock-new ${product.stock > 0 && product.stock <= product.low_stock_threshold ? 'low-stock-alert' : ''}`}>
+          {product.stock} left
+        </div>
       </div>
     </div>
   );

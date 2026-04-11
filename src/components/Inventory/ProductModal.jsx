@@ -53,7 +53,7 @@ const ProductModal = ({
                   <label 
                     htmlFor="product-image-upload"
                     className="premium-btn"
-                    style={{ background: 'white', color: 'var(--slate-700)', border: '1px solid var(--border-main)', padding: '0 16px', height: '40px', fontSize: '13px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', width: 'auto', boxShadow: 'none' }}
+                    style={{ background: 'var(--card-bg)', color: 'var(--slate-700)', border: '1px solid var(--border-main)', padding: '0 16px', height: '40px', fontSize: '13px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', width: 'auto', boxShadow: 'none' }}
                   >
                      <svg style={{ width: '18px', height: '18px', marginRight: '8px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />

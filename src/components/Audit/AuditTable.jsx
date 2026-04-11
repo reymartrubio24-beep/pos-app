@@ -39,7 +39,7 @@ const AuditTable = ({ logs, loading, getInitials }) => {
             <tr key={log.id}>
               <td style={{ paddingLeft: '24px' }}>
                 <div style={{ color: 'var(--text-main)', fontSize: '13px', fontWeight: '600' }}>{new Date(log.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</div>
-                <div style={{ color: 'var(--slate-400)', fontSize: '11px', fontWeight: '500' }}>{new Date(log.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
+                <div style={{ color: 'var(--slate-600)', fontSize: '11px', fontWeight: '700' }}>{new Date(log.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
               </td>
               <td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -86,10 +86,10 @@ const AuditTable = ({ logs, loading, getInitials }) => {
                       log.action === 'Update' ? '#F59E0B' :
                       log.action === 'Delete' ? '#EF4444' : '#64748b'
                   }} />
-                  <span style={{ fontWeight: '600', fontSize: '13px', color: 'var(--text-main)' }}>{log.action}</span>
+                  <span style={{ fontWeight: '800', fontSize: '13px', color: 'var(--text-main)' }}>{log.action}</span>
                 </div>
               </td>
-              <td style={{ color: 'var(--text-sub)', fontSize: '13px', paddingRight: '24px', fontWeight: '500' }}>{log.details}</td>
+              <td style={{ color: 'var(--slate-800)', fontSize: '13px', paddingRight: '24px', fontWeight: '600' }}>{log.details}</td>
             </tr>
           ))}
         </tbody>

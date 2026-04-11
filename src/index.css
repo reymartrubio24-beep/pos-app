@@ -3,17 +3,17 @@
   --primary-dark: #08bb82;
   --primary-light: rgba(16, 185, 129, 0.397);
   
-  /* Slate Scale */
+  /* Slate Scale - Darkened for high contrast */
   --slate-50: #f8fafc;
   --slate-100: #f1f5f9;
   --slate-200: #e2e8f0;
-  --slate-300: #cbd5e1;
-  --slate-400: #94a3b8;
-  --slate-500: #64748b;
-  --slate-600: #475569;
-  --slate-700: #334155;
-  --slate-800: #1e293b;
-  --slate-900: #0f172a;
+  --slate-300: #b9c6d6; /* Darkened from cbd5e1 */
+  --slate-400: #718096; /* Darkened from 94a3b8 */
+  --slate-500: #4a5568; /* Darkened from 64748b */
+  --slate-600: #2d3748; /* Darkened from 475569 */
+  --slate-700: #1a202c; /* Darkened from 334155 */
+  --slate-800: #171923; /* Darkened from 1e293b */
+  --slate-900: #0a0b11; /* Darkened from 0f172a */
 
   /* Forest Green Scale */
   --green-500: #10b981;
@@ -60,24 +60,26 @@
 
 [data-theme='dark'] {
   --bg-main: #0b0f0d; 
-  --bg-sidebar: #042f2e; /* Teal-ish deep green for dark mode */
+  --bg-sidebar: #042f2e; 
   --text-main: #f8fafc;
-  --text-sub: #7e8c85;
-  --border-main: rgba(255, 255, 255, 0.05);
+  --text-sub: #94a3b8; /* Increased contrast for readability */
+  --border-main: rgba(255, 255, 255, 0.08); 
   --card-bg: #121715; 
-  --slate-50: #121715;
+  --slate-50: #0b0f0d;
   --slate-100: #1a221f;
-  --slate-200: #1a221f;
-  --slate-300: #334139;
-  --slate-400: #47554e;
-  --slate-700: #1e2924;
-  --slate-800: #0f1712;
-  --slate-900: #f8fafc;
+  --slate-200: #212a26;
+  --slate-300: #33412a;
+  --slate-400: #94a3b8;
+  --slate-500: #cbd5e1;
+  --slate-600: #e2e8f0;
+  --slate-700: #f1f5f9;
+  --slate-800: #f8fafc;
+  --slate-900: #ffffff;
   --success: #10b981;
   --primary: #10b981; 
   --primary-light: rgba(16, 185, 129, 0.1);
   --success-light: rgba(16, 185, 129, 0.05);
-  --card-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
   --topbar-bg: #0b0f0d;
 }
 
@@ -93,6 +95,7 @@ body {
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Layout Container */
@@ -349,7 +352,8 @@ body {
 }
 
 .premium-table tr:hover td {
-  background-color: var(--slate-50);
+  background-color: var(--slate-100);
+  cursor: pointer;
 }
 
 /* Badges */
@@ -546,15 +550,47 @@ body {
   text-transform: uppercase;
 }
 
-/* Category Specific Colors */
-.cat-beverages { background: #e0f2fe; color: #0284c7; }
-.cat-snacks { background: #ffedd5; color: #d97706; }
-.cat-dairy { background: #fef9c3; color: #ca8a04; }
-.cat-canned-goods { background: #f3e8ff; color: #9333ea; }
-.cat-bread-bakery { background: #dcfce7; color: #16a34a; }
-.cat-condiments { background: #fee2e2; color: #dc2626; }
-.cat-personal-care { background: #fce7f3; color: #db2777; }
-.cat-household { background: #f1f5f9; color: #475569; }
+/* Category Specific Colors - Interactive Palette */
+.cat-beverages { background: #e0f2fe; color: #0369a1; } /* Blue */
+.cat-coffee-tea-cocoa { background: #fef3c7; color: #b45309; } /* Amber */
+.cat-snacks-sweets { background: #ffedd5; color: #c2410c; } /* Orange */
+.cat-dairy-eggs, .cat-dairy { background: #fef9c3; color: #a16207; } /* Yellow-Dark */
+.cat-bread-bakery, .cat-bakery { background: #dcfce7; color: #15803d; } /* Emerald */
+.cat-canned-goods { background: #f3e8ff; color: #7e22ce; } /* Violet */
+.cat-instant-noodles-soups { background: #fae8ff; color: #a21caf; } /* Fuchsia */
+.cat-grains-pasta-noodles { background: #fff7ed; color: #9a3412; } /* Orange-Red */
+.cat-condiments-sauces { background: #fee2e2; color: #b91c1c; } /* Red */
+.cat-spices-seasonings { background: #ffedd5; color: #9a3412; } /* Brownish */
+.cat-cooking-oils-essentials { background: #ecfdf5; color: #065f46; } /* Teal-Dark */
+.cat-breakfast-cereal { background: #fffbeb; color: #92400e; } /* Amber-Light */
+.cat-frozen-foods { background: #eff6ff; color: #1d4ed8; } /* Blue-Bold */
+.cat-meat-seafood { background: #fef2f2; color: #991b1b; } /* Dark Red */
+.cat-fresh-produce { background: #f7fee7; color: #4d7c0f; } /* Lime */
+.cat-personal-care { background: #fce7f3; color: #be185d; } /* Pink */
+.cat-health-wellness { background: #f0fdfa; color: #0f766e; } /* Teal */
+.cat-household-supplies { background: #f8fafc; color: #475569; } /* Slate */
+.cat-cleaning-laundry { background: #ecfeff; color: #0e7490; } /* Cyan */
+.cat-baby-care { background: #fff1f2; color: #e11d48; } /* Rose */
+.cat-pet-supplies { background: #f5f5f4; color: #57534e; } /* Stone */
+.cat-stationery-school-supplies { background: #eef2ff; color: #4338ca; } /* Indigo */
+.cat-hardware-diy { background: #fafaf9; color: #44403c; } /* Stone-Light */
+.cat-cigarettes-tobacco, .cat-cigarettes, .cat-tobacco { background: #f9fafb; color: #374151; } /* Grey-Scale */
+.cat-alcohol-spirits { background: #fff7ed; color: #c2410c; } /* Vintage Orange */
+.cat-electronics-gadgets { background: #f1f5f9; color: #334155; } /* Admin Blue */
+.cat-others { background: #f1f5f9; color: #64748b; } /* Default Grey */
+
+/* Dark Mode Overrides for Category Badges - High Contrast Palette */
+[data-theme='dark'] .product-category-badge { opacity: 1; border: 1px solid rgba(255, 255, 255, 0.05); }
+[data-theme='dark'] .cat-beverages { background: rgba(14, 165, 233, 0.15); color: #7dd3fc; border-color: rgba(14, 165, 233, 0.3); }
+[data-theme='dark'] .cat-coffee-tea-cocoa { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
+[data-theme='dark'] .cat-snacks-sweets, [data-theme='dark'] .cat-snacks { background: rgba(249, 115, 22, 0.15); color: #fb923c; border-color: rgba(249, 115, 22, 0.3); }
+[data-theme='dark'] .cat-dairy-eggs, [data-theme='dark'] .cat-dairy { background: rgba(234, 179, 8, 0.15); color: #facc15; border-color: rgba(234, 179, 8, 0.3); }
+[data-theme='dark'] .cat-bread-bakery, [data-theme='dark'] .cat-bakery { background: rgba(34, 197, 94, 0.15); color: #4ade80; border-color: rgba(34, 197, 94, 0.3); }
+[data-theme='dark'] .cat-canned-goods { background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.3); }
+[data-theme='dark'] .cat-instant-noodles-soups { background: rgba(217, 70, 239, 0.15); color: #e879f9; border-color: rgba(217, 70, 239, 0.3); }
+[data-theme='dark'] .cat-personal-care { background: rgba(236, 72, 153, 0.15); color: #f472b6; border-color: rgba(236, 72, 153, 0.3); }
+[data-theme='dark'] .cat-cigarettes-tobacco, [data-theme='dark'] .cat-tobacco { background: rgba(239, 68, 68, 0.1); color: #fca5a5; border-color: rgba(239, 68, 68, 0.2); }
+[data-theme='dark'] .cat-household-supplies { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border-color: rgba(148, 163, 184, 0.2); }
 
 .product-info-bottom {
   display: flex;
@@ -573,6 +609,12 @@ body {
   font-size: 12px;
   color: var(--slate-400);
   font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.product-stock-new.low-stock-alert {
+  color: var(--danger);
+  font-weight: 700;
 }
 
 .pos-search-wrapper {

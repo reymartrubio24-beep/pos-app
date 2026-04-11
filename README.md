@@ -48,13 +48,13 @@
 
 ### 🛠️ Built With
 
-| Layer     | Technology                                                 |
-| --------- | ---------------------------------------------------------- |
-| Frontend  | [React 19](https://reactjs.org/) + [Vite 5](https://vitejs.dev/) |
-| Backend   | [PHP](https://www.php.net/) (REST API)                     |
-| Database  | [MySQL](https://www.mysql.com/) via [XAMPP](https://www.apachefriends.org/) |
-| Styling   | Vanilla CSS with CSS Variables & Inter font (Google Fonts)  |
-| Tooling   | ESLint, Prettier                                           |
+| Layer    | Technology                                                                  |
+| -------- | --------------------------------------------------------------------------- |
+| Frontend | [React 19](https://reactjs.org/) + [Vite 5](https://vitejs.dev/)            |
+| Backend  | [PHP](https://www.php.net/) (REST API)                                      |
+| Database | [MySQL](https://www.mysql.com/) via [XAMPP](https://www.apachefriends.org/) |
+| Styling  | Vanilla CSS with CSS Variables & Inter font (Google Fonts)                  |
+| Tooling  | ESLint, Prettier                                                            |
 
 ---
 
@@ -143,7 +143,6 @@ npm install
    > The Vite dev server proxies `/api` requests to this path automatically via `vite.config.js`.
 
 4. **Create the database:**
-
    - Start **Apache** and **MySQL** from the XAMPP Control Panel.
    - Open **phpMyAdmin** (`http://localhost/phpmyadmin`).
    - Create a new database called `pos_system`.
@@ -183,21 +182,23 @@ npm run dev
 
 ### 🎯 Application Roles & Permissions
 
-| Feature            | Owner / Admin | Cashier |
-| ------------------ | :-----------: | :-----: |
-| Dashboard          |      ✅       |   ✅    |
-| POS Terminal       |      ✅       |   ✅    |
-| Inventory          |      ✅       |   ✅    |
-| Sales Reports      |      ✅       |   ❌    |
-| Audit Logs         |      ✅       |   ❌    |
-| User Management    |      ✅       |   ❌    |
+| Feature         | Owner / Admin | Cashier |
+| --------------- | :-----------: | :-----: |
+| Dashboard       |      ✅       |   ✅    |
+| POS Terminal    |      ✅       |   ✅    |
+| Inventory       |      ✅       |   ✅    |
+| Sales Reports   |      ✅       |   ❌    |
+| Audit Logs      |      ✅       |   ❌    |
+| User Management |      ✅       |   ❌    |
 
 **Owner / Admin**
+
 - Full access to all modules including dashboard analytics, sales reports, audit logs, and user management.
 - Can create, update, and delete users and assign roles.
 - Can export and clear sales and audit data.
 
 **Cashier**
+
 - Access to the POS Terminal for processing sales transactions.
 - View-only access to the Dashboard and Inventory.
 - Redirected to the POS Terminal on login for quick checkout.
@@ -206,12 +207,19 @@ npm run dev
 
 ## 🗺️ Roadmap
 
-- [ ] Integrate with payment gateways (GCash, PayMaya, Stripe)
-- [ ] Add barcode scanner support
-- [ ] Develop mobile-optimized dashboard views
-- [ ] Generate downloadable PDF reports
-- [ ] Add receipt printing support
-- [ ] Multi-branch store support
+- [ ] **Mobile Accessibility** 📱
+  - [ ] Progressive Web App (PWA) support for mobile installation
+  - [ ] Dedicated mobile-optimized dashboard for owners
+  - [ ] Responsive UI refinements for small-screen POS checkout
+- [ ] **Payment & Hardware** 💳
+  - [ ] Integrate with digital wallets (GCash, PayMaya, GrabPay via Stripe/Xendit)
+  - [ ] Hardware barcode scanner integration
+  - [ ] ESC/POS receipt thermal printer support
+- [ ] **Advanced Features** ✨
+  - [ ] Generate downloadable PDF sales & inventory reports
+  - [ ] Multi-branch / Multi-store cloud synchronization
+  - [ ] Dynamic discount & promotion management system
+  - [ ] AI-powered sales forecasting based on trends
 
 ---
 

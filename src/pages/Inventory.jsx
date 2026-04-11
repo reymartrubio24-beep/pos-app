@@ -3,6 +3,7 @@ import { api } from '../utils/api';
 import { PRODUCT_CATEGORIES } from '../utils/constants';
 import ProductTable from '../components/Inventory/ProductTable';
 import ProductModal from '../components/Inventory/ProductModal';
+import HistoryModal from '../components/Inventory/HistoryModal';
 import ConfirmModal from '../components/Common/ConfirmModal';
 
 const Inventory = ({ user }) => {
@@ -14,6 +15,10 @@ const Inventory = ({ user }) => {
   const [formData, setFormData] = useState({ name: '', category: '', price: '', stock: '', low_stock_threshold: '10' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
+  
+  // History state
+  const [showHistory, setShowHistory] = useState(false);
+  const [selectedHistoryProduct, setSelectedHistoryProduct] = useState(null);
   
   // Confirmation state
   const [showConfirm, setShowConfirm] = useState(false);
@@ -66,6 +71,11 @@ const Inventory = ({ user }) => {
     }
     setSelectedFile(null);
     setIsModalOpen(true);
+  };
+
+  const handleOpenHistory = (product = null) => {
+    setSelectedHistoryProduct(product);
+    setShowHistory(true);
   };
 
   const handleFileChange = (e) => {
@@ -132,36 +142,82 @@ const Inventory = ({ user }) => {
 
   return (
     <div className="inventory-content">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>Inventory Management</h1>
-          <p style={{ color: 'var(--slate-500)', fontSize: '14px' }}>Maintain your stock and product records</p>
+          <h1 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '4px', letterSpacing: '-0.5px' }}>Inventory Management</h1>
+          <p style={{ color: 'var(--slate-500)', fontSize: '14px', fontWeight: '500' }}>Maintain your stock and product records</p>
         </div>
-        {(user?.role === 'owner' || user?.role === 'admin') && (
-          <button className="premium-btn" onClick={() => handleOpenModal()}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          
+          {(user?.role === 'owner' || user?.role === 'admin') && (
+            <button 
+              className="secondary-btn" 
+              onClick={() => window.location.href = '/api/products/export_inventory.php'}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '10px 18px',
+                fontWeight: '700',
+                fontSize: '13px',
+                borderRadius: '12px',
+                background: 'var(--card-bg)',
+                border: '1px solid var(--border-main)',
+                color: 'var(--slate-700)'
+              }}
+            >
+              <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </button>
+          )}
+
+          <button 
+            className="secondary-btn" 
+            onClick={() => handleOpenHistory(null)}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '10px 18px',
+              fontWeight: '700',
+              fontSize: '13px',
+              borderRadius: '12px'
+            }}
+          >
             <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Add Product
+            Stock History
           </button>
-        )}
+
+          {(user?.role === 'owner' || user?.role === 'admin') && (
+            <button className="premium-btn" onClick={() => handleOpenModal()} style={{ padding: '10px 18px', borderRadius: '12px' }}>
+              <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+              </svg>
+              Add Product
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="premium-card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-main)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-           <div style={{ position: 'relative', width: '320px' }}>
+      <div className="premium-card" style={{ padding: 0, overflow: 'hidden', boxShadow: 'var(--card-shadow-md)' }}>
+        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-main)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--card-bg)' }}>
+            <div style={{ position: 'relative', width: '320px' }}>
               <input 
                 type="text" 
                 placeholder="Search inventory..." 
                 className="input-field" 
-                style={{ height: '40px', paddingLeft: '36px', fontSize: '13px' }}
+                style={{ height: '44px', paddingLeft: '40px', fontSize: '14px' }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: 'var(--slate-400)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', width: '18px', height: '18px', color: 'var(--slate-400)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-           </div>
+            </div>
         </div>
 
         <ProductTable 
@@ -169,6 +225,7 @@ const Inventory = ({ user }) => {
           loading={loading} 
           onEdit={handleOpenModal} 
           onDelete={handleDelete} 
+          onViewHistory={handleOpenHistory}
           user={user}
         />
       </div>
@@ -183,6 +240,13 @@ const Inventory = ({ user }) => {
         categories={categories}
         handleFileChange={handleFileChange}
         handleSubmit={handleSubmit}
+      />
+
+      <HistoryModal 
+        show={showHistory}
+        onClose={() => setShowHistory(false)}
+        product={selectedHistoryProduct}
+        user={user}
       />
 
       <ConfirmModal 

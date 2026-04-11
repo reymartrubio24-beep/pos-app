@@ -16,8 +16,9 @@ const RecentTransactions = ({ recent }) => {
                    <th>Date & Time</th>
                    <th>Products</th>
                    <th>Items</th>
-                   <th>Payment</th>
                    <th>Total</th>
+                   <th>Paid</th>
+                   <th style={{ textAlign: 'right' }}>Change</th>
                 </tr>
              </thead>
              <tbody>
@@ -30,17 +31,14 @@ const RecentTransactions = ({ recent }) => {
                          {tx.product_names || 'N/A'}
                       </td>
                       <td>{tx.item_count || 1} items</td>
-                      <td>
-                         <span className={`badge ${tx.payment_method === 'Cash' ? 'badge-success' : 'badge-info'}`}>
-                            {tx.payment_method}
-                         </span>
-                      </td>
                       <td style={{ fontWeight: '700' }}>₱{parseFloat(tx.total).toLocaleString()}</td>
+                      <td style={{ color: 'var(--success)', fontWeight: '600' }}>₱{parseFloat(tx.amount_received || tx.total).toLocaleString()}</td>
+                      <td style={{ textAlign: 'right', color: 'var(--slate-500)' }}>₱{Math.max(0, parseFloat(tx.amount_received || tx.total) - parseFloat(tx.total)).toLocaleString()}</td>
                    </tr>
                 ))}
                 {(!recent || recent.length === 0) && (
                    <tr>
-                      <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: 'var(--slate-400)' }}>No recent transactions</td>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--slate-400)' }}>No recent transactions</td>
                    </tr>
                 )}
              </tbody>

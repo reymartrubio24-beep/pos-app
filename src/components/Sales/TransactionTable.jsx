@@ -31,9 +31,12 @@ const TransactionTable = ({ transactions, loading }) => {
             <th>Date & Time</th>
             <th>Staff Name</th>
             <th>Products Sold</th>
+            <th>Items</th>
             <th>Subtotal</th>
             <th>Tax (12%)</th>
-            <th style={{ textAlign: 'right', paddingRight: '24px' }}>Grand Total</th>
+            <th>Grand Total</th>
+            <th>Received</th>
+            <th style={{ textAlign: 'right', paddingRight: '24px' }}>Change</th>
           </tr>
         </thead>
         <tbody>
@@ -42,12 +45,12 @@ const TransactionTable = ({ transactions, loading }) => {
               <td style={{ paddingLeft: '24px' }}>
                 <div style={{ fontWeight: '700', color: 'var(--primary)', letterSpacing: '0.5px' }}>#TRX-{t.id.toString().padStart(4, '0')}</div>
               </td>
-              <td style={{ color: 'var(--slate-500)', fontSize: '13px', fontWeight: '500' }}>
+              <td style={{ color: 'var(--slate-800)', fontSize: '13px', fontWeight: '700' }}>
                 <div>{new Date(t.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                <div style={{ fontSize: '11px', opacity: 0.7 }}>{new Date(t.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</div>
+                <div style={{ fontSize: '11px', color: 'var(--slate-600)', fontWeight: '700' }}>{new Date(t.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</div>
               </td>
               <td style={{ fontWeight: '600', color: 'var(--text-main)' }}>{t.cashier_name}</td>
-              <td style={{ color: 'var(--text-sub)', fontSize: '12px', maxWidth: '220px' }}>
+              <td style={{ color: 'var(--text-sub)', fontSize: '12px', maxWidth: '200px' }}>
                 <div style={{ 
                   display: '-webkit-box', 
                   WebkitLineClamp: 2, 
@@ -58,10 +61,19 @@ const TransactionTable = ({ transactions, loading }) => {
                   {t.product_names || <span style={{ color: 'var(--slate-400)', fontStyle: 'italic' }}>N/A</span>}
                 </div>
               </td>
-              <td style={{ color: 'var(--text-sub)' }}>₱{parseFloat(t.subtotal).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
-              <td style={{ color: 'var(--text-sub)' }}>₱{parseFloat(t.vat).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
-              <td style={{ textAlign: 'right', paddingRight: '24px' }}>
-                <span style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-main)' }}>₱{parseFloat(t.total).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+              <td style={{ color: 'var(--slate-900)', fontSize: '13px', fontWeight: '700' }}>
+                {(t.item_count || 0)} stock
+              </td>
+              <td style={{ color: 'var(--text-sub)', fontSize: '13px' }}>₱{parseFloat(t.subtotal).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+              <td style={{ color: 'var(--text-sub)', fontSize: '13px' }}>₱{parseFloat(t.vat).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+              <td>
+                <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>₱{parseFloat(t.total).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+              </td>
+              <td style={{ color: 'var(--success)', fontWeight: '600', fontSize: '13px' }}>
+                ₱{parseFloat(t.amount_received || t.total).toLocaleString(undefined, {minimumFractionDigits: 2})}
+              </td>
+              <td style={{ textAlign: 'right', paddingRight: '24px', color: 'var(--slate-800)', fontSize: '13px', fontWeight: '700' }}>
+                ₱{Math.max(0, (parseFloat(t.amount_received || t.total) - parseFloat(t.total))).toLocaleString(undefined, {minimumFractionDigits: 2})}
               </td>
             </tr>
           ))}

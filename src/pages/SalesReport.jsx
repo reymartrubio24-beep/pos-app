@@ -5,11 +5,17 @@ import TransactionTable from '../components/Sales/TransactionTable';
 import ConfirmModal from '../components/Common/ConfirmModal';
 
 const SalesReport = () => {
+  const getLocalDateString = (ms) => {
+    const d = new Date(ms);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+  };
+
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dates, setDates] = useState({ 
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], 
-    end: new Date().toISOString().split('T')[0] 
+    start: getLocalDateString(Date.now() - 30 * 24 * 60 * 60 * 1000), 
+    end: getLocalDateString(Date.now()) 
   });
   
   // Confirmation state
@@ -75,7 +81,7 @@ const SalesReport = () => {
             CLEAR ALL RECORDS
           </button>
 
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', background: 'white', padding: '10px 20px', borderRadius: '14px', boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-main)' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', background: 'var(--card-bg)', padding: '10px 20px', borderRadius: '14px', boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-main)' }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--slate-400)', textTransform: 'uppercase' }}>From</span>
                 <input type="date" className="input-field" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })} style={{ border: 'none', background: 'var(--slate-50)', height: '36px', width: '130px', padding: '0 8px', fontSize: '13px', borderRadius: '8px', fontWeight: '600' }} />
@@ -97,7 +103,7 @@ const SalesReport = () => {
               <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-main)' }}>Transaction History</h3>
               <p style={{ fontSize: '12px', color: 'var(--slate-500)' }}>Showing all sales from {new Date(dates.start).toLocaleDateString()} to {new Date(dates.end).toLocaleDateString()}</p>
             </div>
-            <button onClick={handleExportCSV} className="premium-btn" style={{ background: 'white', color: 'var(--slate-700)', border: '1px solid var(--border-main)', padding: '0 16px', height: '40px', fontSize: '13px', fontWeight: '600', boxShadow: 'none' }}>
+            <button onClick={handleExportCSV} className="premium-btn" style={{ background: 'var(--card-bg)', color: 'var(--slate-700)', border: '1px solid var(--border-main)', padding: '0 16px', height: '40px', fontSize: '13px', fontWeight: '600', boxShadow: 'none' }}>
                <svg style={{ width: '18px', height: '18px', marginRight: '8px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                </svg>
