@@ -1,6 +1,8 @@
 import React from 'react';
 
 const DashboardCards = ({ stats }) => {
+  const trends = stats?.trends || { today: 0, week: 0, month: 0, avg: 0 };
+  
   const cards = [
     { 
       title: "Today's Revenue", 
@@ -12,11 +14,11 @@ const DashboardCards = ({ stats }) => {
         </svg>
       ),
       color: 'var(--primary)',
-      trend: '+8.2% from yesterday',
-      trendUp: true
+      trend: `${trends.today >= 0 ? '+' : ''}${trends.today}% from yesterday`,
+      trendUp: trends.today >= 0
     },
     { 
-      title: "This Week", 
+      title: "Last 7 Days", 
       value: `₱${parseFloat(stats?.week?.revenue || 0).toLocaleString()}`, 
       count: `${stats?.week?.count || 0} transactions`, 
       icon: (
@@ -25,8 +27,8 @@ const DashboardCards = ({ stats }) => {
         </svg>
       ),
       color: 'var(--success)',
-      trend: '+12.5% from last week',
-      trendUp: true
+      trend: `${trends.week >= 0 ? '+' : ''}${trends.week}% from last week`,
+      trendUp: trends.week >= 0
     },
     { 
       title: "This Month", 
@@ -38,8 +40,8 @@ const DashboardCards = ({ stats }) => {
         </svg>
       ),
       color: '#8b5cf6',
-      trend: '+5.1% from last month',
-      trendUp: true
+      trend: `${trends.month >= 0 ? '+' : ''}${trends.month}% from last month`,
+      trendUp: trends.month >= 0
     },
     { 
       title: "Avg. Sales", 
@@ -51,8 +53,8 @@ const DashboardCards = ({ stats }) => {
         </svg>
       ),
       color: 'var(--warning)',
-      trend: '-2.3% from yesterday',
-      trendUp: false
+      trend: `${trends.avg >= 0 ? '+' : ''}${trends.avg}% from yesterday`,
+      trendUp: trends.avg >= 0
     },
   ];
 

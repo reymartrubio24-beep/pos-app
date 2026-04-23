@@ -220,7 +220,7 @@ npm run dev
   - [ ] Multi-branch / Multi-store cloud synchronization
   - [ ] Dynamic discount & promotion management system
   - [ ] AI-powered sales forecasting based on trends
-
+            
 ---
 
 ## 🤝 Contributing

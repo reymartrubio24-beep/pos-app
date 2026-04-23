@@ -59,6 +59,7 @@
 }
 
 [data-theme='dark'] {
+  color-scheme: dark;
   --bg-main: #0b0f0d; 
   --bg-sidebar: #042f2e; 
   --text-main: #f8fafc;
@@ -81,6 +82,12 @@
   --success-light: rgba(16, 185, 129, 0.05);
   --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
   --topbar-bg: #0b0f0d;
+}
+
+[data-theme='dark'] input::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(100);
+  opacity: 1;
+  cursor: pointer;
 }
 
 * {

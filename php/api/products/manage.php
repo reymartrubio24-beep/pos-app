@@ -107,15 +107,18 @@ try {
         }
 
         $image_url = handleFileUpload();
+        $removeImage = ($data['remove_image'] ?? '') === 'true';
+        
         $isRestock = (int)$stock > (int)$oldProduct['stock'];
         $diff = (int)$stock - (int)$oldProduct['stock'];
 
-        if ($image_url) {
+        if ($image_url || $removeImage) {
+            $val = $removeImage ? null : $image_url;
             $stmt = $pdo->prepare("UPDATE products SET name = ?, category = ?, price = ?, stock = ?, low_stock_threshold = ?, image_url = ?" . ($isRestock ? ", last_restock = CURRENT_TIMESTAMP, last_stock_before = ?, last_stock_added = ?" : "") . " WHERE id = ?");
             if ($isRestock) {
-                $stmt->execute([$name, $category, $price, $stock, $threshold, $image_url, $oldProduct['stock'], $diff, $id]);
+                $stmt->execute([$name, $category, $price, $stock, $threshold, $val, $oldProduct['stock'], $diff, $id]);
             } else {
-                $stmt->execute([$name, $category, $price, $stock, $threshold, $image_url, $id]);
+                $stmt->execute([$name, $category, $price, $stock, $threshold, $val, $id]);
             }
         } else {
             $stmt = $pdo->prepare("UPDATE products SET name = ?, category = ?, price = ?, stock = ?, low_stock_threshold = ?" . ($isRestock ? ", last_restock = CURRENT_TIMESTAMP, last_stock_before = ?, last_stock_added = ?" : "") . " WHERE id = ?");

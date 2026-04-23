@@ -86,7 +86,7 @@ const SalesReport = () => {
                 <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--slate-400)', textTransform: 'uppercase' }}>From</span>
                 <input type="date" className="input-field" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })} style={{ border: 'none', background: 'var(--slate-50)', height: '36px', width: '130px', padding: '0 8px', fontSize: '13px', borderRadius: '8px', fontWeight: '600' }} />
              </div>
-             <div style={{ color: 'var(--slate-200)', fontWeight: 'bold' }}>→</div>
+             <div style={{ color: 'var(--text-main)', fontWeight: 'bold', opacity: 0.5 }}>→</div>
              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--slate-400)', textTransform: 'uppercase' }}>To</span>
                 <input type="date" className="input-field" value={dates.end} onChange={(e) => setDates({ ...dates, end: e.target.value })} style={{ border: 'none', background: 'var(--slate-50)', height: '36px', width: '130px', padding: '0 8px', fontSize: '13px', borderRadius: '8px', fontWeight: '600' }} />

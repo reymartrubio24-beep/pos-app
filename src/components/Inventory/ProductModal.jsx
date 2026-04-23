@@ -9,6 +9,7 @@ const ProductModal = ({
   setFormData, 
   previewUrl, 
   handleFileChange, 
+  handleRemoveImage,
   handleSubmit,
   categories = PRODUCT_CATEGORIES
 }) => {
@@ -33,9 +34,37 @@ const ProductModal = ({
           <div style={{ marginBottom: '20px' }}>
             <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--slate-700)', display: 'block', marginBottom: '8px' }}>Product Image</label>
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-               <div style={{ width: '80px', height: '80px', borderRadius: '16px', background: 'var(--slate-50)', border: '2px dashed var(--border-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+               <div style={{ width: '80px', height: '80px', borderRadius: '16px', background: 'var(--slate-50)', border: '2px dashed var(--border-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
                   {previewUrl ? (
-                     <img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                     <>
+                        <img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button 
+                          type="button" 
+                          onClick={handleRemoveImage}
+                          title="Remove Image"
+                          style={{ 
+                            position: 'absolute', 
+                            top: '4px', 
+                            right: '4px', 
+                            background: 'white', 
+                            border: 'none', 
+                            borderRadius: '50%', 
+                            width: '20px', 
+                            height: '20px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            color: 'var(--danger)',
+                            padding: 0
+                          }}
+                        >
+                          <svg style={{ width: '12px', height: '12px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                     </>
                   ) : (
                      <svg style={{ width: '32px', height: '32px', color: 'var(--slate-300)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />

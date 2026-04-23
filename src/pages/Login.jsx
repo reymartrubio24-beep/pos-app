@@ -176,7 +176,7 @@ const Login = ({ onLogin }) => {
                 }} 
                 disabled={loading}
               >
-                {loading ? <div className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%' }}></div> : 'Sign In to Account'}
+                {loading ? <div className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%' }}></div> : 'Login '}
               </button>
             </div>
           </form>

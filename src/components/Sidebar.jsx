@@ -37,7 +37,7 @@ const Sidebar = ({ user, activePage, onNavigate, onLogout, isCollapsed, isMobile
         {!isCollapsed && (
           <div>
             <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'white', letterSpacing: '-0.02em' }}>RetailPOS</h2>
-            <p style={{ fontSize: '11px', color: 'var(--slate-500)', fontWeight: '600', textTransform: 'uppercase' }}>Management</p>
+            <p style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)', fontWeight: '600', textTransform: 'uppercase' }}>Management</p>
           </div>
         )}
       </div>
@@ -118,7 +118,7 @@ const Sidebar = ({ user, activePage, onNavigate, onLogout, isCollapsed, isMobile
                  style={{ 
                    background: 'rgba(255,255,255,0.05)', 
                    border: 'none', 
-                   color: 'var(--slate-400)', 
+                   color: 'rgba(255, 255, 255, 0.5)', 
                    cursor: 'pointer',
                    padding: '8px',
                    borderRadius: '8px',
@@ -142,7 +142,7 @@ const Sidebar = ({ user, activePage, onNavigate, onLogout, isCollapsed, isMobile
                     marginTop: '12px',
                     background: 'transparent', 
                     border: 'none', 
-                    color: 'var(--slate-500)', 
+                    color: 'rgba(255, 255, 255, 0.5)', 
                     cursor: 'pointer'
                   }}
                >

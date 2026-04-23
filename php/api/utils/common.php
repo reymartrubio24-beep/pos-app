@@ -1,5 +1,6 @@
 <?php
 // Common initialization for API endpoints
+date_default_timezone_set('Asia/Manila');
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -26,16 +27,16 @@ function checkAuth($role = null)
 
     if ($role) {
         $allowedRoles = is_array($role) ? $role : [$role];
-        $currentRole = strtolower(trim((string)($_SESSION['role'] ?? '')));
-        
+        $currentRole = strtolower(trim((string) ($_SESSION['role'] ?? '')));
+
         $match = false;
         foreach ($allowedRoles as $r) {
-            if (strtolower(trim((string)$r)) === $currentRole) {
+            if (strtolower(trim((string) $r)) === $currentRole) {
                 $match = true;
                 break;
             }
         }
-        
+
         if (!$match) {
             sendResponse(['error' => 'Forbidden'], 403);
         }

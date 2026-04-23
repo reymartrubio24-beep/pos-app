@@ -102,7 +102,7 @@ const App = () => {
       case 'inventory': return <Inventory user={user} />;
       case 'sales': return (user.role === 'owner' || user.role === 'admin') ? <SalesReport /> : <Dashboard user={user} />;
       case 'audit': return (user.role === 'owner' || user.role === 'admin') ? <AuditLog /> : <Dashboard user={user} />;
-      case 'users': return (user.role === 'owner' || user.role === 'admin') ? <Users /> : <Dashboard user={user} />;
+      case 'users': return (user.role === 'owner' || user.role === 'admin') ? <Users user={user} /> : <Dashboard user={user} />;
       default: return <Dashboard user={user} />;
     }
   };

@@ -6,7 +6,7 @@ const ProductFilters = ({ search, setSearch, category, setCategory, categories }
       <div className="pos-search-wrapper">
         <input 
           type="text" 
-          placeholder="Search product or scan barcode..." 
+          placeholder="Search products..." 
           className="input-field pos-search-input"
           value={search}
           onChange={(e) => setSearch(e.target.value)}

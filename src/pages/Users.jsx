@@ -4,7 +4,7 @@ import UserTable from '../components/Users/UserTable';
 import UserModal from '../components/Users/UserModal';
 import ConfirmModal from '../components/Common/ConfirmModal';
 
-const Users = () => {
+const Users = ({ user }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -172,6 +172,7 @@ const Users = () => {
           loading={loading} 
           onEdit={handleEditClick} 
           onDelete={handleDelete} 
+          currentUser={user}
         />
       </div>
 

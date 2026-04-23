@@ -1,6 +1,6 @@
 import React from 'react';
 
-const UserTable = ({ users, loading, onEdit, onDelete }) => {
+const UserTable = ({ users, loading, onEdit, onDelete, currentUser }) => {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '48px', color: 'var(--text-sub)' }}>Loading users...</div>
@@ -86,24 +86,26 @@ const UserTable = ({ users, loading, onEdit, onDelete }) => {
             </td>
             <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                 <button 
-                   onClick={() => onEdit(user)}
-                   style={{ 
-                     background: 'rgba(16, 185, 129, 0.05)', 
-                     border: 'none', 
-                     color: 'var(--success)', 
-                     padding: '8px', 
-                     borderRadius: '8px',
-                     cursor: 'pointer',
-                     opacity: 0.7,
-                     transition: 'all 0.2s'
-                   }}
-                   title="Edit User"
-                 >
-                   <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                   </svg>
-                 </button>
+                 {!(currentUser?.role === 'owner' && user.username === 'admin') && (
+                   <button 
+                    onClick={() => onEdit(user)}
+                    style={{ 
+                      background: 'rgba(16, 185, 129, 0.05)', 
+                      border: 'none', 
+                      color: 'var(--success)', 
+                      padding: '8px', 
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      opacity: 0.7,
+                      transition: 'all 0.2s'
+                    }}
+                    title="Edit User"
+                  >
+                    <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                 )}
                   {user.username !== 'admin' && (
                     <button 
                       onClick={() => onDelete(user)}

@@ -1,5 +1,7 @@
 <?php
 // Simple database connection configuration
+date_default_timezone_set('Asia/Manila');
+
 $host = 'localhost';
 $dbname = 'pos_system';
 $username = 'root'; // DEFAULT FOR XAMPP
@@ -10,6 +12,9 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+    // Sync MySQL timezone with PHP
+    $pdo->exec("SET time_zone = '" . date('P') . "'");
 
     // Run migration check: ensure product_name column exists in transaction_items
     $columns = $pdo->query("SHOW COLUMNS FROM transaction_items LIKE 'product_name'")->fetchAll();
@@ -31,7 +36,7 @@ try {
             $pdo = new PDO("mysql:host=$host;charset=utf8", $username, $password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname`");
-            
+
             // Reconnect to the new database
             $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

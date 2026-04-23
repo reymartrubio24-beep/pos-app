@@ -15,6 +15,7 @@ const Inventory = ({ user }) => {
   const [formData, setFormData] = useState({ name: '', category: '', price: '', stock: '', low_stock_threshold: '10' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
   
   // History state
   const [showHistory, setShowHistory] = useState(false);
@@ -70,6 +71,7 @@ const Inventory = ({ user }) => {
       setPreviewUrl('');
     }
     setSelectedFile(null);
+    setRemoveImage(false);
     setIsModalOpen(true);
   };
 
@@ -83,7 +85,14 @@ const Inventory = ({ user }) => {
     if (file) {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+      setRemoveImage(false);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setPreviewUrl('');
+    setRemoveImage(true);
   };
 
   const handleSubmit = async (e) => {
@@ -97,6 +106,7 @@ const Inventory = ({ user }) => {
     data.append('stock', formData.stock);
     data.append('low_stock_threshold', formData.low_stock_threshold);
     if (selectedFile) data.append('image', selectedFile);
+    if (removeImage) data.append('remove_image', 'true');
     if (editingProduct) data.append('id', editingProduct.id);
 
     try {
@@ -239,6 +249,7 @@ const Inventory = ({ user }) => {
         previewUrl={previewUrl}
         categories={categories}
         handleFileChange={handleFileChange}
+        handleRemoveImage={handleRemoveImage}
         handleSubmit={handleSubmit}
       />
 
